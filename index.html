@@ -46,12 +46,39 @@ const _ALLOWED = {
   'jeanpaulbgnon73@gmail.com' : { role: 'gestionnaire', name: "M'BOUKE Bienvenue" },
   'dpservice493@gmail.com'    : { role: 'caissier',     name: 'Dogoun Martine'    }
 };
-const _ALLOWED_UID = {
-  'ATT7XBPqaWflEeEqKZKzgSKT6hS2' : { role: 'directeur',    name: 'Jean Paul BOGNON',   email: 'jeanpaulbognon3@gmail.com' },
-  'XDFHoQioOHgy5yP8LmuDYCEAfpo1' : { role: 'gestionnaire', name: "M'BOUKE Bienvenue",  email: 'jeanpaulbgnon73@gmail.com' },
-  'KkBhG05IPcYjjrg121wI3udKDo42' : { role: 'caissier',     name: 'Dogoun Martine',     email: 'dpservice493@gmail.com'    },
+// ════════════════════════════════════════════════════
+//  MULTI-ENTREPRISES — Chaque UID peut avoir un rôle
+//  différent selon l'entreprise choisie
+// ════════════════════════════════════════════════════
+const ENTREPRISES = {
+  'dpgestpro': {
+    nom     : 'DpGestPro',
+    couleur : '#6c63ff',
+    users   : {
+      'ATT7XBPqaWflEeEqKZKzgSKT6hS2': { role:'directeur',    name:'Jean Paul BOGNON',  email:'jeanpaulbognon3@gmail.com' },
+      'XDFHoQioOHgy5yP8LmuDYCEAfpo1': { role:'gestionnaire', name:"M'BOUKE Bienvenue", email:'jeanpaulbgnon73@gmail.com'  },
+      'KkBhG05IPcYjjrg121wI3udKDo42': { role:'caissier',     name:'Dogoun Martine',    email:'dpservice493@gmail.com'     }
+    }
+  },
+  'ong2md': {
+    nom     : 'ONG 2MD',
+    couleur : '#43e97b',
+    users   : {
+      'KkBhG05IPcYjjrg121wI3udKDo42': { role:'directeur',    name:"M'bouke Bienvenue", email:'dpservice493@gmail.com'     },
+      'XDFHoQioOHgy5yP8LmuDYCEAfpo1': { role:'gestionnaire', name:'Vlavo Andre',       email:'jeanpaulbgnon73@gmail.com'  },
+      'ATT7XBPqaWflEeEqKZKzgSKT6hS2': { role:'caissier',     name:'Jean Paul Bognon',  email:'jeanpaulbognon3@gmail.com'  }
+    }
+  }
 };
+
+// Entreprise active (sélectionnée à la connexion)
+let currentEntreprise = null;
+
+// Compatibilité ancienne logique
+const _ALLOWED_UID = {};
+Object.values(ENTREPRISES).forEach(e => Object.assign(_ALLOWED_UID, e.users));
 window._ALLOWED_UID = _ALLOWED_UID;
+window.ENTREPRISES  = ENTREPRISES;
 
 // ─── Détecter changement d'état auth ───
 onAuthStateChanged(auth, async (user) => {
@@ -470,7 +497,7 @@ onAuthStateChanged(auth, async (user) => {
 <div id="app">
   <!-- TOPBAR -->
   <div class="topbar">
-    <div class="topbar-logo">DpGest<span>Pro</span></div>
+    <div class="topbar-logo" id="topbar-logo">DpGest<span>Pro</span></div>
     <div class="topbar-spacer"></div>
     <div id="role-badge" class="topbar-badge badge-directeur">Directeur</div>
     <div class="topbar-user">
@@ -1056,6 +1083,33 @@ const DB = {
 //  AUTH — Firebase
 // ---
 
+// Entreprise sélectionnée par défaut
+let selectedEntrepriseId = 'dpgestpro';
+
+function selectEntreprise(id, btn) {
+  selectedEntrepriseId = id;
+  document.querySelectorAll('.ent-btn').forEach(b => {
+    b.style.background = 'var(--surface2)';
+    b.style.borderColor = 'var(--border)';
+  });
+  btn.style.background   = 'rgba(108,99,255,.15)';
+  btn.style.borderColor  = 'var(--accent)';
+
+  // Mettre à jour le hint utilisateurs
+  const ent = ENTREPRISES[id];
+  if(ent) {
+    const users = Object.values(ent.users);
+    const dir   = users.find(u=>u.role==='directeur');
+    const gest  = users.find(u=>u.role==='gestionnaire');
+    const cais  = users.find(u=>u.role==='caissier');
+    const hint  = document.getElementById('login-hint-users');
+    if(hint) hint.innerHTML =
+      '<strong>👑 Directeur</strong> : '    + (dir?.name  || '-') + '<br>' +
+      '<strong>📋 Gestionnaire</strong> : ' + (gest?.name || '-') + '<br>' +
+      '<strong>💳 Caissier(e)</strong> : '  + (cais?.name || '-');
+  }
+}
+
 function togglePass() {
   const inp = document.getElementById('login-pass');
   const eye = document.getElementById('pass-eye');
@@ -1145,17 +1199,28 @@ async function doLogin() {
 
 // Appelé par onAuthStateChanged après connexion Firebase
 window.fbLoginSuccess = async function(fbUser) {
-  const email   = fbUser.email.toLowerCase();
-  const profile = ALLOWED_USERS[email] || { role: 'caissier', name: fbUser.displayName || email };
+  // Récupérer le profil selon l'entreprise sélectionnée
+  const entId   = selectedEntrepriseId || 'dpgestpro';
+  const ent     = ENTREPRISES[entId];
+  const profile = ent?.users[fbUser.uid] || { role:'caissier', name: fbUser.displayName || fbUser.email };
+
+  currentEntreprise = entId;
+  window.currentEntrepriseId = entId;
+
   DB.currentUser = {
-    id   : fbUser.uid,
-    name : fbUser.displayName || profile.name,
-    email: fbUser.email,
-    role : profile.role
+    id          : fbUser.uid,
+    name        : fbUser.displayName || profile.name,
+    email       : fbUser.email,
+    role        : profile.role,
+    entreprise  : entId,
+    entrepriseNom: ent?.nom || entId
   };
+
+  // Mettre à jour les settings avec le nom de l'entreprise
+  DB.settings.company = ent?.nom || DB.settings.company;
+
   const loadingEl = document.getElementById('login-loading');
   if(loadingEl) loadingEl.style.display = 'block';
-  // Charger toutes les données depuis Firestore
   await loadAllDataFromFirestore();
   if(loadingEl) loadingEl.style.display = 'none';
   loginSuccess(DB.currentUser);
@@ -1164,48 +1229,42 @@ window.fbLoginSuccess = async function(fbUser) {
 // ── Charger toutes les collections Firestore ──
 async function loadAllDataFromFirestore() {
   if(!window.FB) return;
-  const { db, collection, getDocs, doc, getDoc, query, orderBy } = window.FB;
+  const { db, collection, getDocs, doc, getDoc } = window.FB;
+  const entId = window.currentEntrepriseId || 'dpgestpro';
+
   try {
-    // Settings
-    const settSnap = await getDoc(doc(db, 'settings', 'company'));
+    // Chemin isolé par entreprise : entreprises/{entId}/products etc.
+    const basePath = 'entreprises/' + entId;
+
+    // Settings entreprise
+    const settSnap = await getDoc(doc(db, basePath + '/settings', 'company'));
     if(settSnap.exists()) DB.settings = { ...DB.settings, ...settSnap.data() };
 
     // Produits
-    const prodSnap = await getDocs(collection(db, 'products'));
-    if(!prodSnap.empty) {
-      DB.products = prodSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-    }
+    const prodSnap = await getDocs(collection(db, basePath + '/products'));
+    if(!prodSnap.empty) DB.products = prodSnap.docs.map(d => ({ id: d.id, ...d.data() }));
 
     // Clients
-    const cliSnap = await getDocs(collection(db, 'clients'));
-    if(!cliSnap.empty) {
-      DB.clients = cliSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-    }
+    const cliSnap = await getDocs(collection(db, basePath + '/clients'));
+    if(!cliSnap.empty) DB.clients = cliSnap.docs.map(d => ({ id: d.id, ...d.data() }));
 
     // Projets
-    const projSnap = await getDocs(collection(db, 'projects'));
-    if(!projSnap.empty) {
-      DB.projects = projSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-    }
+    const projSnap = await getDocs(collection(db, basePath + '/projects'));
+    if(!projSnap.empty) DB.projects = projSnap.docs.map(d => ({ id: d.id, ...d.data() }));
 
     // Achats
-    const purchSnap = await getDocs(collection(db, 'purchases'));
-    if(!purchSnap.empty) {
-      DB.purchases = purchSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-    }
+    const purchSnap = await getDocs(collection(db, basePath + '/purchases'));
+    if(!purchSnap.empty) DB.purchases = purchSnap.docs.map(d => ({ id: d.id, ...d.data() }));
 
     // Ventes
-    const salesSnap = await getDocs(collection(db, 'sales'));
-    if(!salesSnap.empty) {
-      DB.sales = salesSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-    }
+    const salesSnap = await getDocs(collection(db, basePath + '/sales'));
+    if(!salesSnap.empty) DB.sales = salesSnap.docs.map(d => ({ id: d.id, ...d.data() }));
 
-    // Écoute temps réel sur ventes (Directeur voit les nouvelles ventes en direct)
     setupRealtimeListeners();
 
   } catch(e) {
     console.warn('Firestore load error:', e);
-    toast('Données locales utilisées (erreur Firestore: ' + e.message + ')');
+    toast('Données locales utilisées');
   }
 }
 
@@ -1213,9 +1272,10 @@ async function loadAllDataFromFirestore() {
 function setupRealtimeListeners() {
   if(!window.FB) return;
   const { db, collection, onSnapshot } = window.FB;
+  const entId = window.currentEntrepriseId || 'dpgestpro';
 
   // Écouter les nouvelles ventes en temps réel
-  onSnapshot(collection(db, 'sales'), (snap) => {
+  onSnapshot(collection(db, 'entreprises/' + entId + '/sales'), (snap) => {
     if(!snap.metadata.hasPendingWrites) {
       DB.sales = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       if(document.getElementById('page-sales')?.classList.contains('active') ||
@@ -1233,7 +1293,7 @@ function setupRealtimeListeners() {
   });
 
   // Écouter stock en temps réel
-  onSnapshot(collection(db, 'products'), (snap) => {
+  onSnapshot(collection(db, 'entreprises/' + entId + '/products'), (snap) => {
     if(!snap.metadata.hasPendingWrites) {
       DB.products = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       if(document.getElementById('page-inventory')?.classList.contains('active')) {
@@ -1245,29 +1305,31 @@ function setupRealtimeListeners() {
 
 // ── Helpers Firebase CRUD ──
 window.fbSave = async function(collectionName, id, data) {
-  // Toujours retourner succès — Firestore en arrière-plan uniquement
   if(!window.FB) return id || true;
+  const entId    = window.currentEntrepriseId || 'dpgestpro';
+  const fullPath = 'entreprises/' + entId + '/' + collectionName;
   try {
     const { db, doc, setDoc, addDoc, collection, serverTimestamp } = window.FB;
     const payload = { ...data, updatedAt: serverTimestamp(), updatedBy: DB.currentUser?.id || 'local' };
     if(id) {
-      await setDoc(doc(db, collectionName, String(id)), payload, { merge: true });
+      await setDoc(doc(db, fullPath, String(id)), payload, { merge: true });
     } else {
-      const ref = await addDoc(collection(db, collectionName), { ...payload, createdAt: serverTimestamp() });
+      const ref = await addDoc(collection(db, fullPath), { ...payload, createdAt: serverTimestamp() });
       return ref.id;
     }
   } catch(e) {
     console.warn('Firestore write skipped:', e.message);
-    // Continuer sans Firestore — données gardées en mémoire
   }
   return id || true;
 };
 
 window.fbDelete = async function(collectionName, id) {
   if(!window.FB) return;
+  const entId    = window.currentEntrepriseId || 'dpgestpro';
+  const fullPath = 'entreprises/' + entId + '/' + collectionName;
   try {
     const { db, doc, deleteDoc } = window.FB;
-    await deleteDoc(doc(db, collectionName, String(id)));
+    await deleteDoc(doc(db, fullPath, String(id)));
   } catch(e) {
     console.warn('Firestore delete skipped:', e.message);
   }
@@ -1277,6 +1339,15 @@ function loginSuccess(user) {
   document.getElementById('login-screen').style.display = 'none';
   const app = document.getElementById('app');
   app.classList.add('visible');
+
+  // Mettre à jour logo topbar selon entreprise
+  const logoEl = document.getElementById('topbar-logo');
+  if(logoEl && user.entrepriseNom) {
+    const nom = user.entrepriseNom;
+    logoEl.innerHTML = nom.includes(' ') ?
+      nom.split(' ')[0] + '<span>' + nom.split(' ').slice(1).join(' ') + '</span>' :
+      nom;
+  }
 
   // Set topbar
   const badge = document.getElementById('role-badge');
