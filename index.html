@@ -1522,8 +1522,8 @@ function renderInventory() {
       <td style="font-weight:600;color:var(--accent)">${fmtNum(p.sellPrice)} F</td>
       <td><span class="badge ${p.qty>p.alert?'badge-success':'badge-danger'}">${p.qty>p.alert?'OK':'Bas'}</span></td>
       <td><div class="row-actions">
-        <button class="btn-sm btn-outline" style="color:var(--accent);border-color:var(--accent)" onclick="editProduct(${p.id})">✏ Modifier</button>
-        <button class="btn-sm btn-danger" onclick="deleteProduct(${p.id})">🗑</button>
+        <button class="btn-sm btn-outline" style="color:var(--accent);border-color:var(--accent)" onclick="editProduct('${p.id}')">✏ Modifier</button>
+        <button class="btn-sm btn-danger" onclick="deleteProduct('${p.id}')">🗑</button>
       </div></td>
     </tr>
   `).join('');
@@ -1630,8 +1630,8 @@ function renderClients() {
       <td><span class="badge ${badgeCls}">${c.type}</span></td>
       <td>
         <div class="row-actions">
-          <button class="btn-sm btn-outline" style="color:var(--accent);border-color:var(--accent)" onclick="editClient(${c.id})" title="Modifier">✏ Modifier</button>
-          <button class="btn-sm btn-danger" onclick="deleteClient(${c.id})" title="Supprimer">🗑</button>
+          <button class="btn-sm btn-outline" style="color:var(--accent);border-color:var(--accent)" onclick="editClient('${c.id}')" title="Modifier">✏ Modifier</button>
+          <button class="btn-sm btn-danger" onclick="deleteClient('${c.id}')" title="Supprimer">🗑</button>
         </div>
       </td>
     </tr>`;
@@ -1750,8 +1750,8 @@ function renderProjects() {
       <td style="font-size:13px;color:var(--text2)">${p.end}</td>
       <td><span class="badge ${p.status==='Terminé'?'badge-success':p.status==='En cours'?'badge-info':p.status==='Annulé'?'badge-danger':'badge-neutral'}">${p.status}</span></td>
       <td><div class="row-actions">
-        <button class="btn-sm btn-outline" style="color:var(--accent);border-color:var(--accent)" onclick="editProject(${p.id})">✏ Modifier</button>
-        <button class="btn-sm btn-danger" onclick="deleteProject(${p.id})">🗑</button>
+        <button class="btn-sm btn-outline" style="color:var(--accent);border-color:var(--accent)" onclick="editProject('${p.id}')">✏ Modifier</button>
+        <button class="btn-sm btn-danger" onclick="deleteProject('${p.id}')">🗑</button>
       </div></td>
     </tr>
   `).join('');
@@ -1852,25 +1852,71 @@ function renderPurchases() {
       <td style="font-weight:600;color:var(--accent)">${fmtNum(p.amount)} F</td>
       <td style="font-size:13px;color:var(--text2)">${p.date}</td>
       <td><span class="badge ${p.status==='Livré'?'badge-success':p.status==='Confirmé'?'badge-info':p.status==='Annulé'?'badge-danger':'badge-neutral'}">${p.status}</span></td>
-      <td><button class="btn-sm btn-outline" onclick="toast('Commande ${p.ref} détails')">👁</button></td>
+      <td style="display:flex;gap:6px">
+        <button class="btn-sm btn-outline" style="color:var(--accent);border-color:var(--accent)" onclick="editPurchase('${p.id}')">✏</button>
+        <button class="btn-sm btn-danger" onclick="deletePurchase('${p.id}')">🗑</button>
+      </td>
     </tr>
   `).join('');
 }
 
-function addPurchase() {
-  const p = {
-    id: DB.nextId.purchase++,
-    ref:`CMD-2025-${String(DB.nextId.purchase).padStart(3,'0')}`,
+function editPurchase(id) {
+  const p = DB.purchases.find(p => String(p.id) === String(id));
+  if(!p) return;
+  document.getElementById('pu-supplier').value = p.supplier || '';
+  document.getElementById('pu-items').value    = p.items    || '';
+  document.getElementById('pu-amount').value   = p.amount   || 0;
+  document.getElementById('pu-date').value     = p.date     || '';
+  document.getElementById('pu-status').value   = p.status   || 'En attente';
+  // Stocker l'id en cours d'édition
+  document.getElementById('modal-purchase').dataset.editId = id;
+  document.querySelector('#modal-purchase .modal-title').textContent = '✏️ Modifier la commande';
+  openModal('modal-purchase');
+}
+
+async function deletePurchase(id) {
+  const p = DB.purchases.find(p => String(p.id) === String(id));
+  if(!p) return;
+  if(confirm('Supprimer la commande "' + p.ref + '" ?')) {
+    try {
+      await window.fbDelete('purchases', id);
+      DB.purchases = DB.purchases.filter(p => String(p.id) !== String(id));
+      renderPurchases();
+      toast('Commande supprimée');
+    } catch(e) { toast('Erreur: ' + e.message); }
+  }
+}
+
+async function addPurchase() {
+  const modal  = document.getElementById('modal-purchase');
+  const editId = modal.dataset.editId || '';
+  const data = {
     supplier: document.getElementById('pu-supplier').value,
-    items: document.getElementById('pu-items').value,
-    amount: +document.getElementById('pu-amount').value,
-    date: document.getElementById('pu-date').value||new Date().toISOString().split('T')[0],
-    status: document.getElementById('pu-status').value
+    items   : document.getElementById('pu-items').value,
+    amount  : +document.getElementById('pu-amount').value,
+    date    : document.getElementById('pu-date').value || new Date().toISOString().split('T')[0],
+    status  : document.getElementById('pu-status').value
   };
-  DB.purchases.push(p);
-  closeModal('modal-purchase');
-  renderPurchases();
-  toast('Commande créée ✅');
+  try {
+    if(editId) {
+      // MODE ÉDITION
+      await window.fbSave('purchases', editId, data);
+      const idx = DB.purchases.findIndex(p => String(p.id) === String(editId));
+      if(idx !== -1) DB.purchases[idx] = { ...DB.purchases[idx], ...data };
+      delete modal.dataset.editId;
+      modal.querySelector('.modal-title').textContent = '🛒 Nouvelle commande';
+      closeModal('modal-purchase'); renderPurchases();
+      toast('Commande mise à jour ✅');
+    } else {
+      // MODE CRÉATION
+      const newId = DB.nextId.purchase++;
+      const p = { id: newId, ref: 'CMD-' + new Date().getFullYear() + '-' + String(newId).padStart(3,'0'), ...data };
+      const fbId = await window.fbSave('purchases', null, p);
+      DB.purchases.push({ ...p, id: fbId || newId });
+      closeModal('modal-purchase'); renderPurchases();
+      toast('Commande créée ✅');
+    }
+  } catch(e) { toast('Erreur: ' + e.message); }
 }
 
 // ---
