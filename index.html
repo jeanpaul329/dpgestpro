@@ -484,11 +484,29 @@ onAuthStateChanged(auth, async (user) => {
       ⏳ Chargement de vos données…
     </div>
 
-    <div class="login-hint" style="margin-top:24px;">
-      <strong>👑 Directeur</strong> : Accès total, visible depuis partout<br>
-      <strong>📋 Gestionnaire</strong> : Inventaire, Clients, Projets, Achats, Caisse<br>
-      <strong>💳 Caissier</strong> : Caisse POS, Ventes, Reçus<br><br>
-      ℹ️ Connectez-vous avec le compte Gmail autorisé par l'administrateur
+    <!-- Sélection entreprise -->
+    <div style="margin-bottom:20px;">
+      <label style="display:block;margin-bottom:8px;font-size:12px;color:var(--text2);font-weight:600;text-transform:uppercase;letter-spacing:.5px">Votre entreprise</label>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <button onclick="selectEntreprise('dpgestpro',this)"
+          class="ent-btn"
+          style="padding:12px;background:rgba(108,99,255,.15);border:2px solid var(--accent);border-radius:10px;color:var(--text);cursor:pointer;font-family:'Syne',sans-serif;font-weight:700;font-size:13px;transition:all .2s">
+          <div style="font-size:20px;margin-bottom:4px">🏢</div>
+          DpGestPro
+        </button>
+        <button onclick="selectEntreprise('ong2md',this)"
+          class="ent-btn"
+          style="padding:12px;background:var(--surface2);border:2px solid var(--border);border-radius:10px;color:var(--text);cursor:pointer;font-family:'Syne',sans-serif;font-weight:700;font-size:13px;transition:all .2s">
+          <div style="font-size:20px;margin-bottom:4px">🌿</div>
+          ONG 2MD
+        </button>
+      </div>
+    </div>
+
+    <div class="login-hint" style="margin-top:16px;" id="login-hint-users">
+      <strong>👑 Directeur</strong> : Jean Paul BOGNON<br>
+      <strong>📋 Gestionnaire</strong> : M'BOUKE Bienvenue<br>
+      <strong>💳 Caissière</strong> : Dogoun Martine
     </div>
   </div>
 </div>
