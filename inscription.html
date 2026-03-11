@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inscription Membre — DpGestPro</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0f0f13; --surface:#1a1a22; --surface2:#22222e;
+    --border:rgba(255,255,255,.08); --text:#f0f0f5; --text2:#a0a0b0;
+    --text3:#606070; --accent:#f5a623; --success:#43e97b; --danger:#ff4757;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+
+  .header {
+    background:var(--surface); border-bottom:1px solid var(--border);
+    padding:14px 20px; display:flex; align-items:center; gap:12px;
+  }
+  .logo { font-family:'Syne',sans-serif; font-weight:800; font-size:18px; }
+  .logo span { color:var(--accent); }
+  .ent-badge { margin-left:auto; font-size:12px; color:var(--text3); }
+
+  .container { max-width:700px; margin:0 auto; padding:30px 20px; }
+
+  .form-card {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:20px; overflow:hidden;
+  }
+  .form-hero {
+    background:linear-gradient(135deg, rgba(245,166,35,.15), rgba(245,166,35,.05));
+    border-bottom:1px solid var(--border); padding:30px; text-align:center;
+  }
+  .form-hero-icon { font-size:52px; margin-bottom:12px; }
+  .form-hero-title { font-family:'Syne',sans-serif; font-weight:800; font-size:24px; margin-bottom:8px; }
+  .form-hero-sub { color:var(--text2); font-size:14px; line-height:1.6; }
+  .form-ent-name { color:var(--accent); font-weight:700; font-size:16px; margin-top:8px; }
+
+  .form-body { padding:30px; }
+  .section-title {
+    font-family:'Syne',sans-serif; font-weight:700; font-size:13px;
+    text-transform:uppercase; letter-spacing:1px; color:var(--accent);
+    margin:24px 0 16px; display:flex; align-items:center; gap:8px;
+  }
+  .section-title::after { content:''; flex:1; height:1px; background:var(--border); }
+
+  .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  @media(max-width:520px) { .form-grid { grid-template-columns:1fr; } }
+  .full { grid-column:1/-1; }
+
+  .form-group { display:flex; flex-direction:column; gap:6px; }
+  .form-group label { font-size:12px; font-weight:600; color:var(--text2); text-transform:uppercase; letter-spacing:.5px; }
+  .form-group label .req { color:var(--danger); margin-left:2px; }
+  .form-group input, .form-group select, .form-group textarea {
+    padding:11px 14px; background:var(--surface2); border:1px solid var(--border);
+    border-radius:10px; color:var(--text); font-size:14px; font-family:'DM Sans',sans-serif;
+    outline:none; transition:border-color .2s;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color:var(--accent); }
+  .form-group select option { background:var(--surface2); }
+
+  .radio-group { display:flex; gap:10px; flex-wrap:wrap; }
+  .radio-btn {
+    padding:8px 16px; background:var(--surface2); border:1px solid var(--border);
+    border-radius:8px; cursor:pointer; font-size:13px; transition:all .2s; user-select:none;
+  }
+  .radio-btn.selected { background:rgba(245,166,35,.15); border-color:var(--accent); color:var(--accent); font-weight:600; }
+
+  .btn-submit {
+    width:100%; padding:16px; background:var(--accent); color:#0f0f13;
+    border:none; border-radius:14px; font-family:'Syne',sans-serif;
+    font-weight:800; font-size:16px; cursor:pointer; transition:opacity .2s;
+    margin-top:24px;
+  }
+  .btn-submit:hover { opacity:.85; }
+  .btn-submit:disabled { opacity:.5; cursor:not-allowed; }
+
+  /* Écran succès */
+  #screen-success {
+    display:none; text-align:center; padding:60px 30px;
+  }
+  .success-icon { font-size:72px; margin-bottom:20px; }
+  .success-title { font-family:'Syne',sans-serif; font-weight:800; font-size:28px; margin-bottom:12px; color:var(--success); }
+  .success-sub { color:var(--text2); font-size:15px; line-height:1.7; margin-bottom:30px; }
+  .success-card {
+    background:rgba(67,233,123,.08); border:1px solid rgba(67,233,123,.2);
+    border-radius:16px; padding:20px; margin-bottom:24px; text-align:left;
+  }
+  .success-card-title { font-size:12px; font-weight:700; color:var(--success); text-transform:uppercase; letter-spacing:.5px; margin-bottom:12px; }
+  .success-info { display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:13px; }
+  .success-info:last-child { border-bottom:none; }
+  .success-info span:first-child { color:var(--text2); }
+  .success-info span:last-child { font-weight:600; }
+
+  .btn-new { padding:12px 24px; background:var(--surface2); border:1px solid var(--border); border-radius:10px; color:var(--text); cursor:pointer; font-size:14px; }
+
+  .required-note { font-size:12px; color:var(--text3); margin-bottom:20px; }
+  .required-note span { color:var(--danger); }
+
+  #form-error { display:none; background:rgba(255,71,87,.1); border:1px solid rgba(255,71,87,.3); border-radius:10px; padding:12px 16px; font-size:13px; color:var(--danger); margin-top:16px; }
+
+  .progress-bar { height:4px; background:var(--surface2); border-radius:2px; margin-bottom:24px; overflow:hidden; }
+  .progress-fill { height:100%; background:var(--accent); border-radius:2px; transition:width .4s; width:0% }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">DpGest<span>Pro</span></div>
+  <div id="ent-badge" class="ent-badge">⛪ Chargement...</div>
+</div>
+
+<div class="container">
+
+  <!-- FORMULAIRE -->
+  <div class="form-card" id="screen-form">
+    <div class="form-hero">
+      <div class="form-hero-icon">✝️</div>
+      <div class="form-hero-title">Formulaire d'Inscription</div>
+      <div class="form-hero-sub">Rejoignez notre communauté de foi.<br>Remplissez ce formulaire pour vous inscrire comme membre.</div>
+      <div class="form-ent-name" id="hero-ent-name">⛪ Chargement...</div>
+    </div>
+
+    <div class="form-body">
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+      <div class="required-note"><span>*</span> Champs obligatoires</div>
+
+      <!-- IDENTITÉ -->
+      <div class="section-title">👤 Identité personnelle</div>
+      <div class="form-grid">
+        <div class="form-group full">
+          <label>Nom complet <span class="req">*</span></label>
+          <input type="text" id="f-nom" placeholder="Prénom(s) et Nom de famille" oninput="updateProgress()">
+        </div>
+        <div class="form-group">
+          <label>Sexe <span class="req">*</span></label>
+          <div class="radio-group" id="rg-sexe">
+            <div class="radio-btn" onclick="selectRadio('sexe','Masculin',this)">👨 Masculin</div>
+            <div class="radio-btn" onclick="selectRadio('sexe','Féminin',this)">👩 Féminin</div>
+          </div>
+          <input type="hidden" id="f-sexe">
+        </div>
+        <div class="form-group">
+          <label>Date de naissance</label>
+          <input type="date" id="f-naissance">
+        </div>
+        <div class="form-group">
+          <label>Situation matrimoniale</label>
+          <select id="f-matrimonial">
+            <option value="">-- Sélectionner --</option>
+            <option>Célibataire</option>
+            <option>Marié(e)</option>
+            <option>Veuf/Veuve</option>
+            <option>Divorcé(e)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Nationalité</label>
+          <input type="text" id="f-nationalite" placeholder="Ex: Béninoise">
+        </div>
+        <div class="form-group">
+          <label>Profession</label>
+          <input type="text" id="f-profession" placeholder="Ex: Enseignant, Commerçant...">
+        </div>
+      </div>
+
+      <!-- CONTACT -->
+      <div class="section-title">📞 Coordonnées</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Téléphone principal <span class="req">*</span></label>
+          <input type="tel" id="f-tel" placeholder="+229 XX XX XX XX" oninput="updateProgress()">
+        </div>
+        <div class="form-group">
+          <label>Téléphone secondaire</label>
+          <input type="tel" id="f-tel2" placeholder="+229 XX XX XX XX">
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="f-email" placeholder="votre@email.com">
+        </div>
+        <div class="form-group">
+          <label>Ville / Localité <span class="req">*</span></label>
+          <input type="text" id="f-ville" placeholder="Ex: Cotonou" oninput="updateProgress()">
+        </div>
+        <div class="form-group full">
+          <label>Quartier / Adresse</label>
+          <input type="text" id="f-quartier" placeholder="Ex: Fidjrossè, rue...">
+        </div>
+      </div>
+
+      <!-- FOI -->
+      <div class="section-title">✝️ Vie spirituelle</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Date de conversion / Nouveau né</label>
+          <input type="date" id="f-conversion">
+        </div>
+        <div class="form-group">
+          <label>Date de baptême</label>
+          <input type="date" id="f-bapteme">
+        </div>
+        <div class="form-group">
+          <label>Baptisé(e) du Saint-Esprit ?</label>
+          <div class="radio-group" id="rg-esprit">
+            <div class="radio-btn" onclick="selectRadio('esprit','Oui',this)">✅ Oui</div>
+            <div class="radio-btn" onclick="selectRadio('esprit','Non',this)">❌ Non</div>
+            <div class="radio-btn" onclick="selectRadio('esprit','En cours',this)">🙏 En cours</div>
+          </div>
+          <input type="hidden" id="f-esprit">
+        </div>
+        <div class="form-group">
+          <label>Ancienne église / Vient de</label>
+          <input type="text" id="f-ancienne-eglise" placeholder="Nom de l'ancienne église">
+        </div>
+        <div class="form-group full">
+          <label>Ministère souhaité</label>
+          <select id="f-ministere">
+            <option value="">-- Aucun pour l'instant --</option>
+            <option value="jeunes">🎯 Ministère des Jeunes</option>
+            <option value="femmes">👩 Ministère des Femmes</option>
+            <option value="enfants">🧒 Ministère des Enfants</option>
+            <option value="hommes">👨 Communion des Hommes</option>
+            <option value="louange">🎵 Louange & Adoration</option>
+            <option value="intercession">🙏 Intercession</option>
+            <option value="evangelisation">📢 Évangélisation</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label>Dons / Talents spirituels</label>
+          <input type="text" id="f-dons" placeholder="Ex: Chant, Prédication, Administration...">
+        </div>
+        <div class="form-group full">
+          <label>Message / Témoignage (optionnel)</label>
+          <textarea id="f-message" rows="3" placeholder="Partagez brièvement votre témoignage ou raison d'adhésion..."></textarea>
+        </div>
+      </div>
+
+      <!-- URGENCE -->
+      <div class="section-title">🆘 Contact d'urgence</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Nom du contact</label>
+          <input type="text" id="f-urgence-nom" placeholder="Nom complet">
+        </div>
+        <div class="form-group">
+          <label>Téléphone d'urgence</label>
+          <input type="tel" id="f-urgence-tel" placeholder="+229 XX XX XX XX">
+        </div>
+        <div class="form-group">
+          <label>Lien de parenté</label>
+          <input type="text" id="f-urgence-lien" placeholder="Ex: Époux/Épouse, Parent...">
+        </div>
+      </div>
+
+      <div id="form-error"></div>
+
+      <button class="btn-submit" id="btn-submit" onclick="soumettre()">
+        ✝️ Soumettre mon inscription
+      </button>
+
+      <div style="text-align:center;margin-top:16px;font-size:12px;color:var(--text3)">
+        Vos données sont sécurisées et utilisées uniquement par l'église.
+      </div>
+    </div>
+  </div>
+
+  <!-- SUCCÈS -->
+  <div id="screen-success" class="form-card">
+    <div class="success-icon">🎉</div>
+    <div class="success-title">Inscription réussie !</div>
+    <div class="success-sub">Bienvenue dans la famille de <strong id="success-ent-name"></strong> !<br>Votre inscription a été enregistrée avec succès. Le responsable prendra contact avec vous prochainement.</div>
+    <div class="success-card">
+      <div class="success-card-title">📋 Récapitulatif</div>
+      <div id="success-recap"></div>
+    </div>
+    <button class="btn-new" onclick="nouvelleInscription()">➕ Inscrire une autre personne</button>
+    <div style="margin-top:16px;font-size:12px;color:var(--text3)">Propulsé par DpGestPro</div>
+  </div>
+
+</div>
+
+<!-- FIREBASE -->
+<script type="module">
+import { initializeApp }           from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+import { getFirestore, collection, addDoc, doc, getDoc, serverTimestamp }
+  from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey:            "AIzaSyDCqoYZLBK0ipbotTejMCAvYGxrkomGIGk",
+  authDomain:        "dpgestpro.firebaseapp.com",
+  projectId:         "dpgestpro",
+  storageBucket:     "dpgestpro.firebasestorage.app",
+  messagingSenderId: "795000345158",
+  appId:             "1:795000345158:web:b33a6f77ce9e98bff87047"
+};
+
+const fbApp = initializeApp(firebaseConfig, 'inscription');
+const db    = getFirestore(fbApp);
+
+// Lire paramètre ?ent= dans l'URL
+const params = new URLSearchParams(window.location.search);
+const entId  = params.get('ent') || 'mvcp_couffo';
+
+// Charger nom église
+let entNom = entId;
+async function chargerEglise() {
+  try {
+    const snap = await getDoc(doc(db, 'entreprises/' + entId + '/eglise', 'fiche'));
+    if(snap.exists() && snap.data().nom) {
+      entNom = snap.data().nom;
+    } else {
+      // Noms par défaut selon entId
+      const noms = { mvcp_couffo:'MVCP COUFFO', dpgestpro:'DpGestPro', ong2md:'ONG 2MD' };
+      entNom = noms[entId] || entId.toUpperCase();
+    }
+  } catch(e) {
+    const noms = { mvcp_couffo:'MVCP COUFFO', dpgestpro:'DpGestPro', ong2md:'ONG 2MD' };
+    entNom = noms[entId] || entId.toUpperCase();
+  }
+  document.getElementById('ent-badge').textContent      = '⛪ ' + entNom;
+  document.getElementById('hero-ent-name').textContent  = '⛪ ' + entNom;
+  document.getElementById('success-ent-name').textContent = entNom;
+  document.title = 'Inscription — ' + entNom;
+}
+chargerEglise();
+
+// Valeurs des radio buttons
+const radioVals = {};
+
+window.selectRadio = function(name, val, el) {
+  radioVals[name] = val;
+  document.getElementById('f-' + name).value = val;
+  const group = document.getElementById('rg-' + name);
+  if(group) group.querySelectorAll('.radio-btn').forEach(b => b.classList.remove('selected'));
+  if(el) el.classList.add('selected');
+  updateProgress();
+};
+
+// Barre de progression
+window.updateProgress = function() {
+  const fields = ['f-nom','f-tel','f-ville','f-sexe'];
+  const filled = fields.filter(f => {
+    const el = document.getElementById(f);
+    return el && el.value.trim();
+  }).length;
+  const pct = Math.round(filled / fields.length * 100);
+  const bar = document.getElementById('progress-fill');
+  if(bar) bar.style.width = pct + '%';
+};
+
+// Soumettre
+window.soumettre = async function() {
+  const nom  = document.getElementById('f-nom').value.trim();
+  const tel  = document.getElementById('f-tel').value.trim();
+  const ville= document.getElementById('f-ville').value.trim();
+  const sexe = document.getElementById('f-sexe').value;
+  const errEl= document.getElementById('form-error');
+  const btn  = document.getElementById('btn-submit');
+
+  errEl.style.display = 'none';
+
+  if(!nom)  { showErr('❌ Le nom complet est obligatoire'); return; }
+  if(!tel)  { showErr('❌ Le numéro de téléphone est obligatoire'); return; }
+  if(!ville){ showErr('❌ La ville est obligatoire'); return; }
+  if(!sexe) { showErr('❌ Veuillez sélectionner votre sexe'); return; }
+
+  btn.disabled    = true;
+  btn.textContent = '⏳ Envoi en cours...';
+
+  const data = {
+    // Identité
+    nom        : nom,
+    sexe       : sexe,
+    naissance  : document.getElementById('f-naissance').value,
+    matrimonial: document.getElementById('f-matrimonial').value,
+    nationalite: document.getElementById('f-nationalite').value,
+    profession : document.getElementById('f-profession').value,
+    // Contact
+    tel        : tel,
+    tel2       : document.getElementById('f-tel2').value,
+    email      : document.getElementById('f-email').value,
+    ville      : ville,
+    quartier   : document.getElementById('f-quartier').value,
+    // Vie spirituelle
+    conversion : document.getElementById('f-conversion').value,
+    bapteme    : document.getElementById('f-bapteme').value,
+    esprit     : document.getElementById('f-esprit').value,
+    ancienne_eglise: document.getElementById('f-ancienne-eglise').value,
+    ministere  : document.getElementById('f-ministere').value,
+    dons       : document.getElementById('f-dons').value,
+    message    : document.getElementById('f-message').value,
+    // Urgence
+    urgence_nom : document.getElementById('f-urgence-nom').value,
+    urgence_tel : document.getElementById('f-urgence-tel').value,
+    urgence_lien: document.getElementById('f-urgence-lien').value,
+    // Métadonnées
+    fonction   : 'membre',
+    statut     : 'Actif',
+    source     : 'formulaire_public',
+    adhesion   : new Date().toISOString().split('T')[0],
+    createdAt  : serverTimestamp()
+  };
+
+  try {
+    await addDoc(collection(db, 'entreprises/' + entId + '/membres'), data);
+
+    // Afficher succès
+    document.getElementById('screen-form').style.display    = 'none';
+    document.getElementById('screen-success').style.display = 'block';
+
+    // Récapitulatif
+    const fonctions = { jeunes:'Ministère des Jeunes', femmes:'Ministère des Femmes', enfants:'Ministère des Enfants', hommes:'Communion des Hommes', louange:'Louange & Adoration', intercession:'Intercession', evangelisation:'Évangélisation' };
+    document.getElementById('success-recap').innerHTML = [
+      ['Nom',       nom],
+      ['Sexe',      sexe],
+      ['Téléphone', tel],
+      ['Ville',     ville],
+      ['Ministère', fonctions[data.ministere] || 'Non précisé'],
+      ['Date inscription', new Date().toLocaleDateString('fr-FR')],
+    ].map(([k,v]) => `<div class="success-info"><span>${k}</span><span>${v||'-'}</span></div>`).join('');
+
+    window.scrollTo(0, 0);
+  } catch(e) {
+    btn.disabled    = false;
+    btn.textContent = '✝️ Soumettre mon inscription';
+    showErr('❌ Erreur : ' + e.message);
+  }
+};
+
+function showErr(msg) {
+  const el = document.getElementById('form-error');
+  el.textContent   = msg;
+  el.style.display = 'block';
+  el.scrollIntoView({ behavior:'smooth', block:'center' });
+}
+
+window.nouvelleInscription = function() {
+  document.getElementById('screen-success').style.display = 'none';
+  document.getElementById('screen-form').style.display    = 'block';
+  document.querySelectorAll('input[type=text],input[type=tel],input[type=email],input[type=date],textarea').forEach(el => el.value = '');
+  document.querySelectorAll('select').forEach(el => el.value = '');
+  document.querySelectorAll('.radio-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('f-sexe').value   = '';
+  document.getElementById('f-esprit').value = '';
+  document.getElementById('progress-fill').style.width = '0%';
+  window.scrollTo(0, 0);
+};
+
+</script>
+</body>
+</html>
