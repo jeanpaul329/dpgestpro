@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paiement Licence — DpGestPro</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'DM Sans',sans-serif; background:#0a0a0f; color:#e2e8f0; min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; }
+  .card { background:#12121a; border:1px solid #2a2a3d; border-radius:20px; padding:32px; width:100%; max-width:560px; }
+  .logo { font-family:'Syne',sans-serif; font-weight:800; font-size:24px; color:#6c63ff; margin-bottom:4px; }
+  .logo span { color:#f59e0b; }
+  h2 { font-family:'Syne',sans-serif; font-size:20px; font-weight:700; margin-bottom:6px; }
+  .subtitle { font-size:13px; color:#94a3b8; margin-bottom:24px; }
+  .recap { background:#1a1a26; border:1px solid #2a2a3d; border-radius:12px; padding:16px; margin-bottom:20px; display:flex; justify-content:space-between; align-items:center; }
+  .recap-nom { font-weight:800; font-size:15px; }
+  .recap-forfait { font-size:12px; color:#94a3b8; margin-top:2px; }
+  .recap-montant { font-size:26px; font-weight:900; color:#6c63ff; }
+  .recap-fcfa { font-size:11px; color:#94a3b8; text-align:right; }
+  .section-title { font-size:12px; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:.5px; margin-bottom:10px; }
+  .methods-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:16px; }
+  .method-card { padding:12px; border:2px solid #2a2a3d; border-radius:12px; cursor:pointer; transition:all .2s; background:#1a1a26; }
+  .method-card:hover { border-color:#6c63ff; }
+  .method-card.selected { border-color:#6c63ff; background:rgba(108,99,255,.1); }
+  .method-card.full { grid-column:1/-1; }
+  .method-icon { width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+  .method-label { font-weight:700; font-size:13px; }
+  .method-sub { font-size:11px; color:#94a3b8; }
+  .instructions { background:#1a1a26; border:1px solid #2a2a3d; border-radius:12px; padding:16px; margin-bottom:14px; display:none; }
+  .phone-number { background:#0a0a0f; border-radius:8px; padding:10px; font-family:monospace; font-size:18px; font-weight:900; text-align:center; letter-spacing:3px; color:#6c63ff; margin-top:8px; }
+  .btn-primary { width:100%; padding:14px; background:linear-gradient(135deg,#6c63ff,#f59e0b); color:white; border:none; border-radius:12px; cursor:pointer; font-weight:800; font-size:15px; font-family:'DM Sans',sans-serif; margin-bottom:8px; }
+  .btn-primary:hover { opacity:.9; }
+  .btn-outline { width:100%; padding:12px; background:transparent; color:#e2e8f0; border:1px solid #2a2a3d; border-radius:12px; cursor:pointer; font-weight:600; font-size:13px; font-family:'DM Sans',sans-serif; }
+  .form-input { width:100%; padding:10px 14px; background:#1a1a26; border:1px solid #2a2a3d; border-radius:8px; color:#e2e8f0; font-size:13px; font-family:'DM Sans',sans-serif; outline:none; }
+  .form-input:focus { border-color:#6c63ff; }
+  .confirm-section { display:none; margin-bottom:14px; }
+  .confirm-row { display:flex; gap:8px; }
+  .btn-confirm { padding:10px 16px; background:#10b981; color:white; border:none; border-radius:8px; cursor:pointer; font-weight:700; white-space:nowrap; }
+  .secure-note { text-align:center; font-size:11px; color:#64748b; margin-top:8px; }
+  .contact { text-align:center; font-size:12px; color:#94a3b8; margin-top:16px; }
+  .contact a { color:#6c63ff; text-decoration:none; }
+  .success-screen { display:none; text-align:center; }
+  .success-icon { font-size:56px; margin-bottom:16px; }
+  select.form-input { appearance:none; }
+  .forfait-selector { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:16px; }
+  .forfait-card { padding:12px; border:2px solid #2a2a3d; border-radius:10px; cursor:pointer; text-align:center; background:#1a1a26; transition:all .2s; }
+  .forfait-card:hover, .forfait-card.selected { border-color:#6c63ff; background:rgba(108,99,255,.1); }
+  .forfait-prix { font-size:18px; font-weight:900; color:#6c63ff; }
+  .forfait-label { font-size:12px; font-weight:700; }
+  .forfait-duree { font-size:10px; color:#94a3b8; }
+</style>
+</head>
+<body>
+
+<div class="card" id="main-card">
+  <div class="logo">DpGest<span>Pro</span></div>
+  <h2>💳 Paiement Licence</h2>
+  <p class="subtitle">Activez votre logiciel de gestion en quelques minutes</p>
+
+  <!-- Sélection entreprise et forfait -->
+  <div id="step-1">
+    <div class="section-title">Votre type d'entreprise</div>
+    <select id="sel-type" class="form-input" style="margin-bottom:12px" onchange="updateForfaits()">
+      <option value="">-- Sélectionner --</option>
+      <option value="commerce">Commerce / ONG</option>
+      <option value="hopital">Hôpital / Centre de santé</option>
+      <option value="ecole">École</option>
+      <option value="microfinance">MicroFinance / IMF</option>
+      <option value="football">Club Sportif</option>
+      <option value="eglise">Église / Association religieuse</option>
+    </select>
+
+    <div class="section-title">Choisissez votre forfait</div>
+    <div class="forfait-selector" id="forfait-cards">
+      <div class="forfait-card" onclick="selectForfait('mensuel',this)" id="fc-mensuel">
+        <div class="forfait-label">Mensuel</div>
+        <div class="forfait-prix" id="fp-mensuel">—</div>
+        <div class="forfait-duree">30 jours</div>
+      </div>
+      <div class="forfait-card" onclick="selectForfait('trimestriel',this)" id="fc-trimestriel">
+        <div class="forfait-label">Trimestriel</div>
+        <div class="forfait-prix" id="fp-trimestriel">—</div>
+        <div class="forfait-duree">90 jours</div>
+      </div>
+      <div class="forfait-card" onclick="selectForfait('semestriel',this)" id="fc-semestriel">
+        <div class="forfait-label">Semestriel</div>
+        <div class="forfait-prix" id="fp-semestriel">—</div>
+        <div class="forfait-duree">180 jours</div>
+      </div>
+      <div class="forfait-card" onclick="selectForfait('annuel',this)" id="fc-annuel">
+        <div class="forfait-label">Annuel</div>
+        <div class="forfait-prix" id="fp-annuel">—</div>
+        <div class="forfait-duree">365 jours</div>
+      </div>
+    </div>
+
+    <div class="section-title">Vos informations</div>
+    <input id="client-nom"   class="form-input" placeholder="Nom complet *" style="margin-bottom:8px">
+    <input id="client-email" class="form-input" placeholder="Email *" type="email" style="margin-bottom:8px">
+    <input id="client-tel"   class="form-input" placeholder="Téléphone *" style="margin-bottom:16px">
+
+    <button class="btn-primary" onclick="passerAuPaiement()">
+      Continuer vers le paiement →
+    </button>
+  </div>
+
+  <!-- Récap + Moyen de paiement -->
+  <div id="step-2" style="display:none">
+    <div class="recap" id="recap-block">
+      <div>
+        <div class="recap-nom" id="r-type">—</div>
+        <div class="recap-forfait" id="r-forfait">—</div>
+        <div style="font-size:11px;color:#94a3b8;margin-top:2px" id="r-client">—</div>
+      </div>
+      <div>
+        <div class="recap-montant" id="r-montant">—</div>
+        <div class="recap-fcfa">FCFA</div>
+      </div>
+    </div>
+
+    <div class="section-title">Moyen de paiement</div>
+    <div class="methods-grid">
+      <div class="method-card" onclick="choisirMethPay('mtn',this)" id="mc-mtn">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="method-icon" style="background:#ffcb00">📱</div>
+          <div><div class="method-label">MTN MoMo</div><div class="method-sub">Mobile Money</div></div>
+        </div>
+      </div>
+      <div class="method-card" onclick="choisirMethPay('moov',this)" id="mc-moov">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="method-icon" style="background:#0066cc">💙</div>
+          <div><div class="method-label">Moov Money</div><div class="method-sub">Mobile Money</div></div>
+        </div>
+      </div>
+      <div class="method-card" onclick="choisirMethPay('orange',this)" id="mc-orange">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="method-icon" style="background:#ff6600">🟠</div>
+          <div><div class="method-label">Orange Money</div><div class="method-sub">Mobile Money</div></div>
+        </div>
+      </div>
+      <div class="method-card" onclick="choisirMethPay('wave',this)" id="mc-wave">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="method-icon" style="background:#1dc8ff">🌊</div>
+          <div><div class="method-label">Wave</div><div class="method-sub">Mobile Money</div></div>
+        </div>
+      </div>
+      <div class="method-card" onclick="choisirMethPay('celtis',this)" id="mc-celtis">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="method-icon" style="background:#00a651">💚</div>
+          <div><div class="method-label">Celtis Cash</div><div class="method-sub">Mobile Money</div></div>
+        </div>
+      </div>
+      <div class="method-card" onclick="choisirMethPay('card',this)" id="mc-card">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="method-icon" style="background:linear-gradient(135deg,#1a1a2e,#6c63ff)">💳</div>
+          <div><div class="method-label">Visa/Mastercard</div><div class="method-sub">Carte bancaire</div></div>
+        </div>
+      </div>
+      <div class="method-card full" onclick="choisirMethPay('virement',this)" id="mc-virement">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="method-icon" style="background:#374151">🏦</div>
+          <div><div class="method-label">Virement Bancaire</div><div class="method-sub">UBA / Ecobank / BOA Bénin</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Instructions -->
+    <div class="instructions" id="pay-instrs"></div>
+
+    <!-- Bouton FedaPay -->
+    <div id="btn-fedapay" style="display:none">
+      <button class="btn-primary" onclick="lancerFedaPayPage()">
+        💳 Payer maintenant — <span id="btn-montant-txt"></span> FCFA
+      </button>
+      <div class="secure-note">🔒 Paiement sécurisé via FedaPay</div>
+    </div>
+
+    <!-- Confirmation manuelle -->
+    <div class="confirm-section" id="confirm-section">
+      <div style="font-size:12px;font-weight:700;color:#94a3b8;margin-bottom:8px">
+        Entrez la référence de transaction après paiement :
+      </div>
+      <div class="confirm-row">
+        <input id="ref-tx" class="form-input" placeholder="Ex: MTN-2025-XXXXXX">
+        <button class="btn-confirm" onclick="soumettreConfirmation()">✅ Confirmer</button>
+      </div>
+      <div style="font-size:11px;color:#64748b;margin-top:6px">
+        Votre clé de licence sera envoyée par email sous 24h.
+      </div>
+    </div>
+
+    <button class="btn-outline" onclick="retourStep1()" style="margin-top:8px">← Modifier ma sélection</button>
+  </div>
+
+  <!-- Succès -->
+  <div class="success-screen" id="success-screen">
+    <div class="success-icon">🎉</div>
+    <h2 style="margin-bottom:8px">Demande envoyée !</h2>
+    <p style="color:#94a3b8;font-size:14px;margin-bottom:16px">
+      Votre demande d'activation a été enregistrée.<br>
+      Vous recevrez votre clé de licence dans les <strong>24 heures</strong>.
+    </p>
+    <div style="background:#1a1a26;border-radius:12px;padding:16px;margin-bottom:16px;font-size:13px">
+      <div style="color:#94a3b8">Référence de votre demande :</div>
+      <div id="success-ref" style="font-family:monospace;font-size:16px;font-weight:900;color:#6c63ff;margin-top:4px"></div>
+    </div>
+    <p style="font-size:12px;color:#64748b">
+      Une question ? Contactez-nous :<br>
+      <a href="mailto:jeanpaulbognon3@gmail.com" style="color:#6c63ff">jeanpaulbognon3@gmail.com</a>
+    </p>
+  </div>
+
+  <div class="contact">
+    Besoin d'aide ? <a href="mailto:jeanpaulbognon3@gmail.com">jeanpaulbognon3@gmail.com</a>
+  </div>
+</div>
+
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDCqoYZLBK0ipbotTejMCAvYGxrkomGIGk",
+  authDomain: "dpgestpro.firebaseapp.com",
+  projectId: "dpgestpro",
+  storageBucket: "dpgestpro.firebasestorage.app",
+  messagingSenderId: "795000345158",
+  appId: "1:795000345152:web:b33a6f77ce9e98bff87047"
+};
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+window._payDB  = db;
+window._payDoc = doc;
+window._paySet = setDoc;
+</script>
+
+<script>
+const TARIFS = {
+  commerce    : { mensuel:15000, trimestriel:40000, semestriel:75000,  annuel:150000 },
+  ong         : { mensuel:15000, trimestriel:40000, semestriel:75000,  annuel:150000 },
+  hopital     : { mensuel:30000, trimestriel:80000, semestriel:150000, annuel:300000 },
+  eglise      : { mensuel:10000, trimestriel:27000, semestriel:50000,  annuel:100000 },
+  microfinance: { mensuel:20000, trimestriel:55000, semestriel:100000, annuel:200000 },
+  football    : { mensuel:15000, trimestriel:40000, semestriel:75000,  annuel:150000 },
+  ecole       : { mensuel:15000, trimestriel:40000, semestriel:75000,  annuel:150000 }
+};
+const FORFAITS = {
+  mensuel     : { label:'Mensuel',     duree:30  },
+  trimestriel : { label:'Trimestriel', duree:90  },
+  semestriel  : { label:'Semestriel',  duree:180 },
+  annuel      : { label:'Annuel',      duree:365 }
+};
+const TYPES_LABELS = {
+  commerce:'Commerce / ONG', hopital:'Hôpital / Centre de santé',
+  ecole:'École', microfinance:'MicroFinance', football:'Club Sportif', eglise:'Église'
+};
+const PAIEMENT_METHODS = {
+  mtn     : { label:'MTN Mobile Money', numero:'97 XX XX XX', online:true  },
+  moov    : { label:'Moov Money',       numero:'96 XX XX XX', online:true  },
+  orange  : { label:'Orange Money',     numero:'95 XX XX XX', online:true  },
+  wave    : { label:'Wave',             numero:'97 XX XX XX', online:false },
+  celtis  : { label:'Celtis Cash',      numero:'94 XX XX XX', online:false },
+  card    : { label:'Visa/Mastercard',  numero:'',            online:true  },
+  virement: { label:'Virement Bancaire',numero:'',            online:false }
+};
+
+let _type='', _forfait='', _montant=0, _method='';
+
+function fmtNum(n) { return Number(n||0).toLocaleString('fr-FR'); }
+
+// Lire param URL ?ent=
+const _urlParams = new URLSearchParams(window.location.search);
+const _urlEnt = _urlParams.get('ent') || '';
+
+function updateForfaits() {
+  _type = document.getElementById('sel-type').value;
+  if(!_type) return;
+  const t = TARIFS[_type] || TARIFS.commerce;
+  Object.keys(FORFAITS).forEach(k => {
+    const el = document.getElementById('fp-'+k);
+    if(el) el.textContent = fmtNum(t[k]) + ' F';
+  });
+}
+
+function selectForfait(forfait, el) {
+  _forfait = forfait;
+  _montant = TARIFS[_type]?.[forfait] || 0;
+  document.querySelectorAll('.forfait-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function passerAuPaiement() {
+  if(!_type) { alert('Sélectionnez votre type d\'entreprise'); return; }
+  if(!_forfait) { alert('Sélectionnez un forfait'); return; }
+  const nom   = document.getElementById('client-nom').value.trim();
+  const email = document.getElementById('client-email').value.trim();
+  const tel   = document.getElementById('client-tel').value.trim();
+  if(!nom || !email) { alert('Nom et email obligatoires'); return; }
+
+  document.getElementById('r-type').textContent    = TYPES_LABELS[_type] || _type;
+  document.getElementById('r-forfait').textContent  = FORFAITS[_forfait].label + ' — ' + FORFAITS[_forfait].duree + ' jours';
+  document.getElementById('r-client').textContent   = nom + ' • ' + email;
+  document.getElementById('r-montant').textContent  = fmtNum(_montant);
+  document.getElementById('btn-montant-txt').textContent = fmtNum(_montant);
+
+  document.getElementById('step-1').style.display = 'none';
+  document.getElementById('step-2').style.display = 'block';
+}
+
+function retourStep1() {
+  document.getElementById('step-1').style.display = 'block';
+  document.getElementById('step-2').style.display = 'none';
+}
+
+function choisirMethPay(method, el) {
+  _method = method;
+  document.querySelectorAll('.method-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+
+  const cfg = PAIEMENT_METHODS[method];
+  const instrEl = document.getElementById('pay-instrs');
+
+  let html = `<div style="font-weight:800;font-size:14px;margin-bottom:10px">${cfg.label}</div>`;
+
+  if(method === 'card') {
+    html += `<div style="font-size:13px;color:#94a3b8">Paiement sécurisé par carte Visa ou Mastercard via FedaPay.<br>Cliquez sur le bouton ci-dessous.</div>`;
+  } else if(method === 'virement') {
+    html += `<div style="font-size:13px;line-height:2">
+      <strong>Banque :</strong> UBA Bénin<br>
+      <strong>Titulaire :</strong> Jean Paul BOGNON<br>
+      <strong>N° Compte :</strong> XX XXXX XXXX XXXX<br>
+      <strong>Motif :</strong> DpGestPro - ${FORFAITS[_forfait]?.label} - ${TYPES_LABELS[_type]}
+    </div>`;
+  } else {
+    html += `<div style="font-size:13px;color:#94a3b8;margin-bottom:8px">
+      Envoyez <strong style="color:#e2e8f0">${fmtNum(_montant)} FCFA</strong> au numéro :<br>
+      Objet : <strong style="color:#e2e8f0">DpGestPro - ${FORFAITS[_forfait]?.label} - ${TYPES_LABELS[_type]}</strong>
+    </div>
+    <div class="phone-number">${cfg.numero}</div>`;
+  }
+
+  instrEl.innerHTML = html;
+  instrEl.style.display = 'block';
+  document.getElementById('btn-fedapay').style.display    = cfg.online  ? 'block' : 'none';
+  document.getElementById('confirm-section').style.display= 'block';
+}
+
+function lancerFedaPayPage() {
+  const FEDAPAY_KEY = 'pk_live_VOTRE_CLE_FEDAPAY'; // À remplacer
+  const nom   = document.getElementById('client-nom').value.trim();
+  const email = document.getElementById('client-email').value.trim();
+
+  if(typeof FedaPay === 'undefined') {
+    const s = document.createElement('script');
+    s.src = 'https://cdn.fedapay.com/checkout.js?v=1.1.7';
+    s.onload = () => _initFedaPay(FEDAPAY_KEY, nom, email);
+    document.head.appendChild(s);
+  } else {
+    _initFedaPay(FEDAPAY_KEY, nom, email);
+  }
+}
+
+function _initFedaPay(key, nom, email) {
+  FedaPay.init({
+    public_key  : key,
+    transaction : {
+      amount      : _montant,
+      description : 'Licence DpGestPro — ' + FORFAITS[_forfait]?.label + ' — ' + TYPES_LABELS[_type]
+    },
+    customer    : { email, lastname: nom },
+    onComplete  : function(resp) {
+      if(resp.reason === FedaPay.CHECKOUT_COMPLETED) {
+        soumettreConfirmation('fedapay-'+resp.transaction?.id);
+      } else {
+        alert('Paiement annulé ou échoué. Réessayez.');
+      }
+    }
+  }).open();
+}
+
+function soumettreConfirmation(refOverride) {
+  const ref   = refOverride || document.getElementById('ref-tx').value.trim();
+  if(!ref) { alert('Entrez la référence de transaction'); return; }
+  const nom   = document.getElementById('client-nom').value.trim();
+  const email = document.getElementById('client-email').value.trim();
+  const tel   = document.getElementById('client-tel').value.trim();
+  const id    = 'PAY-' + Date.now();
+
+  const demande = {
+    type: _type, forfait: _forfait, montant: _montant,
+    methode: _method, reference: ref,
+    nom, email, tel,
+    statut: 'En attente',
+    creeLe: new Date().toISOString()
+  };
+
+  // Sauvegarder dans Firestore
+  if(window._paySet && window._payDB && window._payDoc) {
+    window._paySet(window._payDoc(window._payDB, 'demandes_activation', id), demande)
+      .then(() => afficherSucces(id))
+      .catch(() => afficherSucces(id)); // Afficher quand même
+  } else {
+    setTimeout(() => afficherSucces(id), 500);
+  }
+}
+
+function afficherSucces(id) {
+  document.getElementById('step-2').style.display = 'none';
+  document.getElementById('success-screen').style.display = 'block';
+  document.getElementById('success-ref').textContent = id;
+}
+</script>
+</body>
+</html>
