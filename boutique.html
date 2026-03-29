@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Boutique en ligne — DpGestPro</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --acc:#6c63ff;--green:#10b981;--red:#ef4444;--yellow:#f59e0b;
+  --bg:#f8faff;--surf:#fff;--surf2:#f1f3fb;--surf3:#e8ebf8;
+  --txt:#1a1a2e;--txt2:#4a4a6a;--txt3:#9090b8;
+  --bdr:#e0e4f0;--shadow:0 4px 20px rgba(108,99,255,.1);
+  --radius:14px;
+}
+html,body{min-height:100vh;font-family:'DM Sans',system-ui,sans-serif;
+  background:var(--bg);color:var(--txt)}
+
+/* ── Header ── */
+.header{background:var(--surf);border-bottom:1px solid var(--bdr);
+  padding:0 20px;position:sticky;top:0;z-index:200;
+  box-shadow:0 2px 12px rgba(108,99,255,.08)}
+.header-inner{max-width:1100px;margin:0 auto;height:66px;
+  display:flex;align-items:center;gap:14px}
+.shop-logo{display:flex;align-items:center;gap:10px}
+.shop-logo-icon{width:40px;height:40px;border-radius:10px;
+  background:linear-gradient(135deg,var(--acc),#8b7fff);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;color:#fff}
+.shop-name{font-size:18px;font-weight:900;color:var(--txt)}
+.shop-slogan{font-size:11px;color:var(--txt3)}
+.header-actions{margin-left:auto;display:flex;align-items:center;gap:10px}
+.btn-cart{position:relative;padding:8px 16px;background:var(--acc);color:#fff;
+  border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;
+  display:flex;align-items:center;gap:7px}
+.btn-cart:hover{opacity:.9}
+.cart-badge{position:absolute;top:-6px;right:-6px;width:20px;height:20px;
+  border-radius:50%;background:var(--red);color:#fff;font-size:10px;
+  font-weight:900;display:none;align-items:center;justify-content:center}
+.cart-badge.show{display:flex}
+.btn-search-toggle{padding:8px 14px;border:1px solid var(--bdr);border-radius:10px;
+  background:var(--surf2);color:var(--txt2);font-size:13px;cursor:pointer;
+  display:flex;align-items:center;gap:6px}
+
+/* ── Bannière ── */
+.banner{background:linear-gradient(135deg,var(--acc) 0%,#8b7fff 60%,#6c63ff 100%);
+  color:#fff;padding:40px 20px;text-align:center}
+.banner-inner{max-width:700px;margin:0 auto}
+.banner-title{font-size:32px;font-weight:900;margin-bottom:8px}
+.banner-sub{font-size:15px;opacity:.85;margin-bottom:20px}
+.banner-search{display:flex;background:#fff;border-radius:12px;
+  overflow:hidden;max-width:500px;margin:0 auto;
+  box-shadow:0 8px 32px rgba(0,0,0,.15)}
+.banner-inp{flex:1;padding:13px 16px;border:none;font-size:14px;
+  color:var(--txt);font-family:inherit;outline:none}
+.banner-btn{padding:0 20px;background:var(--acc);color:#fff;border:none;
+  font-size:13px;font-weight:700;cursor:pointer}
+.banner-btn:hover{opacity:.9}
+
+/* ── Filtres ── */
+.filters{background:var(--surf);border-bottom:1px solid var(--bdr);
+  padding:12px 20px;overflow-x:auto}
+.filters-inner{max-width:1100px;margin:0 auto;
+  display:flex;gap:8px;align-items:center}
+.filter-btn{padding:7px 16px;border-radius:20px;border:1px solid var(--bdr);
+  background:transparent;color:var(--txt2);font-size:12px;font-weight:600;
+  cursor:pointer;white-space:nowrap;transition:all .2s}
+.filter-btn.active,.filter-btn:hover{background:var(--acc);color:#fff;border-color:var(--acc)}
+.filter-lbl{font-size:12px;font-weight:700;color:var(--txt3);margin-right:4px;white-space:nowrap}
+
+/* ── Grille produits ── */
+.main{max-width:1100px;margin:0 auto;padding:24px 16px}
+.section-hdr{display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:16px}
+.section-hdr h2{font-size:18px;font-weight:800}
+.sort-sel{padding:7px 12px;border:1px solid var(--bdr);border-radius:8px;
+  background:var(--surf);color:var(--txt);font-size:12px;cursor:pointer}
+.products-grid{display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+
+/* ── Carte produit ── */
+.product-card{background:var(--surf);border:1px solid var(--bdr);
+  border-radius:var(--radius);overflow:hidden;
+  transition:transform .2s,box-shadow .2s;cursor:pointer}
+.product-card:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+.product-img{height:180px;background:linear-gradient(135deg,var(--surf2),var(--surf3));
+  display:flex;align-items:center;justify-content:center;font-size:56px;
+  position:relative;overflow:hidden}
+.product-img img{width:100%;height:100%;object-fit:cover}
+.product-badge{position:absolute;top:10px;left:10px;padding:3px 9px;
+  border-radius:20px;font-size:10px;font-weight:700;color:#fff}
+.badge-promo{background:var(--red)}
+.badge-new{background:var(--green)}
+.badge-stock{background:var(--yellow);color:#000}
+.product-body{padding:14px}
+.product-cat{font-size:10px;font-weight:700;color:var(--acc);
+  text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.product-name{font-size:14px;font-weight:700;margin-bottom:4px;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.product-ref{font-size:11px;color:var(--txt3);margin-bottom:8px}
+.product-price{font-size:20px;font-weight:900;color:var(--acc)}
+.product-price-old{font-size:12px;color:var(--txt3);text-decoration:line-through;margin-left:6px}
+.product-stock{font-size:11px;margin-top:4px}
+.stock-ok{color:var(--green)}
+.stock-low{color:var(--yellow)}
+.stock-out{color:var(--red)}
+.product-footer{padding:0 14px 14px;display:flex;gap:8px}
+.btn-add{flex:1;padding:9px;background:var(--acc);color:#fff;border:none;
+  border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;
+  transition:opacity .2s}
+.btn-add:hover{opacity:.85}
+.btn-add:disabled{background:var(--bdr);color:var(--txt3);cursor:not-allowed}
+.btn-detail{padding:9px 12px;border:1px solid var(--bdr);border-radius:9px;
+  background:transparent;color:var(--txt2);font-size:14px;cursor:pointer}
+.btn-detail:hover{border-color:var(--acc);color:var(--acc)}
+
+/* ── Panier sidebar ── */
+.cart-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);
+  z-index:500;display:none;opacity:0;transition:opacity .3s}
+.cart-overlay.open{display:block;opacity:1}
+.cart-panel{position:fixed;right:0;top:0;bottom:0;width:380px;max-width:100vw;
+  background:var(--surf);z-index:501;display:flex;flex-direction:column;
+  transform:translateX(100%);transition:transform .3s;
+  box-shadow:-8px 0 32px rgba(0,0,0,.15)}
+.cart-panel.open{transform:translateX(0)}
+.cart-hdr{padding:16px 20px;border-bottom:1px solid var(--bdr);
+  display:flex;align-items:center;justify-content:space-between}
+.cart-hdr h3{font-size:16px;font-weight:800}
+.cart-close{background:none;border:none;font-size:20px;cursor:pointer;color:var(--txt3)}
+.cart-items{flex:1;overflow-y:auto;padding:16px}
+.cart-item{display:flex;gap:12px;padding:12px 0;
+  border-bottom:1px solid var(--bdr)}
+.cart-item-icon{width:48px;height:48px;border-radius:8px;
+  background:var(--surf2);display:flex;align-items:center;
+  justify-content:center;font-size:22px;flex-shrink:0}
+.cart-item-name{font-size:13px;font-weight:700;margin-bottom:3px}
+.cart-item-price{font-size:13px;font-weight:800;color:var(--acc)}
+.cart-qty{display:flex;align-items:center;gap:8px;margin-top:6px}
+.qty-btn{width:26px;height:26px;border-radius:6px;border:1px solid var(--bdr);
+  background:var(--surf2);font-size:14px;font-weight:700;cursor:pointer;
+  display:flex;align-items:center;justify-content:center}
+.qty-btn:hover{border-color:var(--acc);color:var(--acc)}
+.qty-val{font-size:13px;font-weight:700;min-width:20px;text-align:center}
+.cart-del{margin-left:auto;background:none;border:none;color:var(--txt3);cursor:pointer;font-size:16px}
+.cart-del:hover{color:var(--red)}
+.cart-footer{padding:16px 20px;border-top:1px solid var(--bdr)}
+.cart-total-row{display:flex;justify-content:space-between;
+  font-size:15px;font-weight:800;margin-bottom:14px}
+.cart-total-val{color:var(--acc);font-size:20px}
+.btn-order{width:100%;padding:14px;background:linear-gradient(135deg,var(--acc),#8b7fff);
+  color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:800;
+  cursor:pointer;box-shadow:0 4px 15px rgba(108,99,255,.35)}
+.btn-order:hover{opacity:.9}
+.cart-empty{text-align:center;padding:48px 20px;color:var(--txt3)}
+
+/* ── Modal produit ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);
+  z-index:600;display:none;align-items:center;justify-content:center;padding:16px}
+.modal-overlay.open{display:flex}
+.modal-box{background:var(--surf);border-radius:20px;width:100%;max-width:560px;
+  max-height:90vh;overflow-y:auto}
+.modal-prod-img{height:220px;background:linear-gradient(135deg,var(--surf2),var(--surf3));
+  border-radius:20px 20px 0 0;display:flex;align-items:center;
+  justify-content:center;font-size:80px}
+.modal-body{padding:24px}
+.modal-prod-cat{font-size:11px;font-weight:700;color:var(--acc);
+  text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.modal-prod-name{font-size:22px;font-weight:900;margin-bottom:8px}
+.modal-prod-price{font-size:28px;font-weight:900;color:var(--acc);margin-bottom:12px}
+.modal-prod-desc{font-size:13px;color:var(--txt2);line-height:1.7;margin-bottom:16px}
+.modal-prod-stock{font-size:13px;margin-bottom:20px}
+.modal-actions{display:flex;gap:10px}
+.btn-modal-add{flex:1;padding:13px;background:var(--acc);color:#fff;
+  border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer}
+.btn-modal-close{padding:13px 18px;border:1px solid var(--bdr);border-radius:12px;
+  background:transparent;color:var(--txt2);font-size:14px;cursor:pointer}
+
+/* ── Modal commande ── */
+.order-form{display:flex;flex-direction:column;gap:12px}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-lbl{font-size:11px;font-weight:700;color:var(--txt3);
+  text-transform:uppercase;letter-spacing:.4px}
+.form-inp{padding:11px 14px;border:1px solid var(--bdr);border-radius:10px;
+  font-size:14px;font-family:inherit;color:var(--txt);background:var(--surf2)}
+.form-inp:focus{outline:none;border-color:var(--acc)}
+
+/* ── Confirmation ── */
+.confirm-box{text-align:center;padding:32px 24px}
+.confirm-icon{font-size:56px;margin-bottom:12px}
+.confirm-title{font-size:20px;font-weight:900;margin-bottom:8px;color:var(--green)}
+.confirm-sub{font-size:13px;color:var(--txt2);line-height:1.6;margin-bottom:20px}
+.confirm-ref{font-family:monospace;font-size:15px;font-weight:700;
+  background:var(--surf2);padding:8px 16px;border-radius:8px;display:inline-block}
+
+/* ── Empty / Loading ── */
+.empty-state{text-align:center;padding:60px 20px;color:var(--txt3)}
+.empty-icon{font-size:48px;margin-bottom:12px}
+.loading{text-align:center;padding:60px}
+.spinner{width:36px;height:36px;border:3px solid var(--bdr);
+  border-top-color:var(--acc);border-radius:50%;
+  animation:spin 1s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── Toast ── */
+.toast{position:fixed;bottom:24px;left:50%;
+  transform:translateX(-50%) translateY(80px);
+  background:var(--txt);color:#fff;padding:10px 20px;
+  border-radius:10px;font-size:13px;font-weight:600;
+  z-index:9999;transition:transform .3s;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+@media(max-width:600px){
+  .products-grid{grid-template-columns:repeat(2,1fr)}
+  .banner-title{font-size:22px}
+  .cart-panel{width:100vw}
+}
+</style>
+</head>
+<body>
+
+<!-- ── Header ── -->
+<div class="header">
+  <div class="header-inner">
+    <div class="shop-logo">
+      <div class="shop-logo-icon" id="hdr-icon">🛍️</div>
+      <div>
+        <div class="shop-name" id="hdr-name">Boutique</div>
+        <div class="shop-slogan" id="hdr-slogan">Chargement...</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn-search-toggle" onclick="focusSearch()">🔍 Rechercher</button>
+      <button class="btn-cart" onclick="toggleCart()">
+        🛒 Panier
+        <span class="cart-badge" id="cart-badge">0</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Bannière ── -->
+<div class="banner" id="banner">
+  <div class="banner-inner">
+    <div class="banner-title" id="banner-title">Bienvenue dans notre boutique</div>
+    <div class="banner-sub" id="banner-sub">Découvrez tous nos produits disponibles</div>
+    <div class="banner-search">
+      <input class="banner-inp" id="search-inp" placeholder="Rechercher un produit..."
+        oninput="filtrerProduits()" type="search">
+      <button class="banner-btn">Rechercher</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Filtres catégories ── -->
+<div class="filters">
+  <div class="filters-inner">
+    <span class="filter-lbl">Catégorie:</span>
+    <button class="filter-btn active" onclick="setCategorie('',this)">Tout</button>
+    <div id="filter-cats"></div>
+  </div>
+</div>
+
+<!-- ── Produits ── -->
+<div class="main">
+  <div class="section-hdr">
+    <h2 id="products-title">Tous les produits</h2>
+    <select class="sort-sel" onchange="trierProduits(this.value)">
+      <option value="nom">Nom A→Z</option>
+      <option value="prix-asc">Prix ↑</option>
+      <option value="prix-desc">Prix ↓</option>
+      <option value="stock">Stock dispo</option>
+    </select>
+  </div>
+  <div id="products-grid" class="products-grid">
+    <div class="loading" style="grid-column:1/-1">
+      <div class="spinner"></div>Chargement des produits...
+    </div>
+  </div>
+</div>
+
+<!-- ── Panier ── -->
+<div class="cart-overlay" id="cart-overlay" onclick="toggleCart()"></div>
+<div class="cart-panel" id="cart-panel">
+  <div class="cart-hdr">
+    <h3>🛒 Mon panier</h3>
+    <button class="cart-close" onclick="toggleCart()">✕</button>
+  </div>
+  <div class="cart-items" id="cart-items">
+    <div class="cart-empty">🛒<br>Votre panier est vide</div>
+  </div>
+  <div class="cart-footer" id="cart-footer" style="display:none">
+    <div class="cart-total-row">
+      <span>Total</span>
+      <span class="cart-total-val" id="cart-total">0 F</span>
+    </div>
+    <button class="btn-order" onclick="ouvrirCommande()">✅ Commander maintenant</button>
+  </div>
+</div>
+
+<!-- ── Modal détail produit ── -->
+<div class="modal-overlay" id="modal-produit" onclick="if(event.target===this) closeModal('modal-produit')">
+  <div class="modal-box">
+    <div class="modal-prod-img" id="mprod-img">🛍️</div>
+    <div class="modal-body">
+      <div class="modal-prod-cat" id="mprod-cat"></div>
+      <div class="modal-prod-name" id="mprod-name"></div>
+      <div class="modal-prod-price" id="mprod-price"></div>
+      <div class="modal-prod-desc" id="mprod-desc"></div>
+      <div class="modal-prod-stock" id="mprod-stock"></div>
+      <div class="modal-actions">
+        <button class="btn-modal-close" onclick="closeModal('modal-produit')">← Retour</button>
+        <button class="btn-modal-add" id="mprod-btn" onclick="ajouterDepuisModal()">🛒 Ajouter au panier</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Modal commande ── -->
+<div class="modal-overlay" id="modal-commande" onclick="if(event.target===this) closeModal('modal-commande')">
+  <div class="modal-box" style="max-width:480px">
+    <div style="padding:24px">
+      <div style="font-size:18px;font-weight:900;margin-bottom:20px">📦 Passer la commande</div>
+
+      <!-- Résumé panier -->
+      <div style="background:var(--surf2);border-radius:10px;padding:14px;margin-bottom:20px">
+        <div id="cmd-items-recap" style="font-size:12px;color:var(--txt2);margin-bottom:8px"></div>
+        <div style="font-size:16px;font-weight:800">Total : <span id="cmd-total-val" style="color:var(--acc)">0 F</span></div>
+      </div>
+
+      <div class="order-form">
+        <div class="form-group">
+          <label class="form-lbl">Votre nom complet *</label>
+          <input class="form-inp" id="cmd-nom" placeholder="Prénom Nom">
+        </div>
+        <div class="form-group">
+          <label class="form-lbl">Téléphone *</label>
+          <input class="form-inp" id="cmd-tel" placeholder="Ex: 0197654321" type="tel">
+        </div>
+        <div class="form-group">
+          <label class="form-lbl">Adresse / Localisation</label>
+          <input class="form-inp" id="cmd-adresse" placeholder="Quartier, ville...">
+        </div>
+        <div class="form-group">
+          <label class="form-lbl">Mode de paiement</label>
+          <select class="form-inp" id="cmd-paiement">
+            <option value="especes">💵 Espèces à la livraison</option>
+            <option value="mtn">📱 MTN Mobile Money</option>
+            <option value="moov">📲 Moov Money</option>
+            <option value="orange">🔶 Orange Money</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-lbl">Notes / Instructions</label>
+          <input class="form-inp" id="cmd-notes" placeholder="Instructions spéciales...">
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:20px">
+        <button class="btn-modal-close" onclick="closeModal('modal-commande')">Annuler</button>
+        <button class="btn-modal-add" onclick="confirmerCommande()">✅ Confirmer la commande</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Modal confirmation ── -->
+<div class="modal-overlay" id="modal-confirm">
+  <div class="modal-box" style="max-width:440px">
+    <div class="confirm-box">
+      <div class="confirm-icon">✅</div>
+      <div class="confirm-title">Commande envoyée !</div>
+      <div class="confirm-sub" id="confirm-msg"></div>
+      <div class="confirm-ref" id="confirm-ref"></div>
+      <button class="btn-modal-add" style="margin-top:20px;width:100%" onclick="closeModal('modal-confirm')">
+        Continuer mes achats
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const app = initializeApp({
+  apiKey:"AIzaSyDCqoYZLBK0ipbotTejMCAvYGxrkomGIGk",
+  authDomain:"dpgestpro.firebaseapp.com",
+  projectId:"dpgestpro",
+  storageBucket:"dpgestpro.appspot.com",
+  messagingSenderId:"123456789",
+  appId:"1:123456789:web:dpgestpro"
+});
+const db = getFirestore(app);
+window._FB = { db, collection, getDocs };
+</script>
+
+<script>
+// ══════════════════════════════════════════════════
+// BOUTIQUE PUBLIQUE — DpGestPro Commerce
+// ══════════════════════════════════════════════════
+
+var _entId    = '';
+var _entNom   = '';
+var _products = [];
+var _filtered = [];
+var _cart     = [];
+var _categorie= '';
+var _search   = '';
+var _modalProd= null;
+
+// ── Config depuis URL ─────────────────────────────
+function getEntId() {
+  var params = new URLSearchParams(window.location.search);
+  return params.get('ent') || 'ets_esse_service';
+}
+
+// ── Entreprises connues ───────────────────────────
+var SHOPS = {
+  'ets_esse_service' : { nom:'Ets ESSE SERVICE',   slogan:'Votre service, notre priorité', icon:'🏪', couleur:'#10b981', adresse:'Azovè, Bénin' },
+  'ets_magnificat'   : { nom:'Ets Le Magnificat',  slogan:'Excellence & Service',           icon:'✨', couleur:'#f59e0b', adresse:'Bénin' },
+  'ets_esa_groupe'   : { nom:'Ets ESA Groupe',      slogan:'Excellence & Ambition',          icon:'🏢', couleur:'#3b82f6', adresse:'Azovè, Bénin' },
+  'ets_maman_exauce' : { nom:'Ets Maman Exaucé',   slogan:'À votre service',                icon:'💝', couleur:'#ec4899', adresse:'Azovè, Bénin' },
+  'ets_tout_va_bien' : { nom:'Ets Tout Va Bien',   slogan:'Tout Va Bien Service',           icon:'🌟', couleur:'#6c63ff', adresse:'Bénin' },
+  'demo_commerce'    : { nom:'Boutique Demo',       slogan:'Articles de démonstration',      icon:'🛍️', couleur:'#6c63ff', adresse:'Bénin' },
+  'ets_rehoboth_kenor': { nom:'Ets REHOBOTH SERVICES CHEZ KENOR', slogan:'Excellence à votre service', icon:'🏪', couleur:'#8b5cf6', adresse:'Lokogba Centre, Voie de Toviklin' },
+};
+
+// ── Init ──────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', function() {
+  _entId = getEntId();
+  var shop = SHOPS[_entId] || { nom:'Boutique', slogan:'Nos produits', icon:'🛍️', couleur:'#6c63ff' };
+  _entNom = shop.nom;
+
+  // Configurer le header
+  document.getElementById('hdr-icon').textContent    = shop.icon;
+  document.getElementById('hdr-name').textContent    = shop.nom;
+  document.getElementById('hdr-slogan').textContent  = shop.adresse || shop.slogan;
+  document.getElementById('banner-title').textContent= 'Bienvenue chez '+shop.nom;
+  document.getElementById('banner-sub').textContent  = shop.slogan;
+  document.title = shop.nom + ' — Boutique';
+
+  // Couleur accent
+  document.documentElement.style.setProperty('--acc', shop.couleur);
+
+  // Charger produits
+  chargerProduits();
+});
+
+// ── Charger produits Firebase ─────────────────────
+function chargerProduits() {
+  var FB = window._FB;
+  if(!FB) { chargerProduitsDemo(); return; }
+
+  FB.getDocs(FB.collection(FB.db, 'entreprises/'+_entId+'/products'))
+    .then(function(snap) {
+      _products = snap.docs.map(function(d) {
+        return Object.assign({id:d.id}, d.data());
+      }).filter(function(p) {
+        return p.name && Number(p.price||p.prix||0) > 0;
+      });
+
+      if(!_products.length) {
+        // Essayer aussi 'sales' pour récupérer les infos produits
+        chargerDepuisVentes();
+        return;
+      }
+      initialiserBoutique();
+    })
+    .catch(function(e) {
+      console.warn('Firebase:', e);
+      chargerProduitsDemo();
+    });
+}
+
+function chargerDepuisVentes() {
+  chargerProduitsDemo();
+}
+
+function chargerProduitsDemo() {
+  _products = [
+    {id:'p1', name:'Stylos BIC (lot de 10)', category:'Fournitures', price:1500, qty:50, ref:'REF-001', description:'Stylos à bille bleus de qualité'},
+    {id:'p2', name:'Cahier 100 pages grand format', category:'Fournitures', price:800, qty:120, ref:'REF-002', description:'Cahier quadrillé 100 pages'},
+    {id:'p3', name:'Savon de Marseille 400g', category:'Hygiène', price:600, qty:80, ref:'REF-003', description:'Savon naturel de qualité supérieure'},
+    {id:'p4', name:'Huile de palme 1L', category:'Alimentation', price:1200, qty:35, ref:'REF-004', description:'Huile de palme pure 100% naturelle'},
+    {id:'p5', name:'Sucre en morceaux 1kg', category:'Alimentation', price:900, qty:60, ref:'REF-005', description:'Sucre blanc raffiné'},
+    {id:'p6', name:'Farine de blé 1kg', category:'Alimentation', price:750, qty:45, ref:'REF-006', description:'Farine de blé tout usage'},
+    {id:'p7', name:'Détergent OMO 500g', category:'Hygiène', price:1100, qty:70, ref:'REF-007', description:'Lessive en poudre toutes températures'},
+    {id:'p8', name:'Cuillères à soupe (lot 6)', category:'Ustensiles', price:2500, qty:25, ref:'REF-008', description:'Cuillères en inox de qualité'},
+  ];
+  initialiserBoutique();
+}
+
+function initialiserBoutique() {
+  // Construire les filtres catégories
+  var cats = [...new Set(_products.map(function(p){ return p.category||p.categorie||'Divers'; }))];
+  var filterEl = document.getElementById('filter-cats');
+  filterEl.innerHTML = cats.map(function(c) {
+    return '<button class="filter-btn" onclick="setCategorie(\''+c+'\',this)">'+c+'</button>';
+  }).join('');
+
+  _filtered = _products.slice();
+  renderProduits();
+}
+
+// ── Filtres ───────────────────────────────────────
+function setCategorie(cat, btn) {
+  _categorie = cat;
+  document.querySelectorAll('.filter-btn').forEach(function(b){ b.classList.remove('active'); });
+  if(btn) btn.classList.add('active');
+  filtrerProduits();
+}
+
+function filtrerProduits() {
+  _search = (document.getElementById('search-inp').value||'').toLowerCase();
+  _filtered = _products.filter(function(p) {
+    var matchCat = !_categorie || (p.category||p.categorie||'Divers') === _categorie;
+    var matchSearch = !_search ||
+      (p.name||'').toLowerCase().includes(_search) ||
+      (p.ref||'').toLowerCase().includes(_search) ||
+      (p.category||'').toLowerCase().includes(_search);
+    return matchCat && matchSearch;
+  });
+
+  var title = _categorie ? _categorie : 'Tous les produits';
+  if(_search) title += ' — "'+_search+'"';
+  document.getElementById('products-title').textContent = title + ' ('+_filtered.length+')';
+  renderProduits();
+}
+
+function trierProduits(val) {
+  _filtered.sort(function(a,b) {
+    if(val==='nom') return (a.name||'').localeCompare(b.name||'');
+    if(val==='prix-asc') return Number(a.price||0)-Number(b.price||0);
+    if(val==='prix-desc') return Number(b.price||0)-Number(a.price||0);
+    if(val==='stock') return Number(b.qty||0)-Number(a.qty||0);
+    return 0;
+  });
+  renderProduits();
+}
+
+function focusSearch() {
+  document.getElementById('search-inp').focus();
+  document.getElementById('search-inp').scrollIntoView({behavior:'smooth'});
+}
+
+// ── Rendu produits ────────────────────────────────
+var EMOJIS = {
+  'Alimentation':'🍞','Hygiène':'🧼','Fournitures':'📚',
+  'Ustensiles':'🍴','Vêtements':'👕','Électronique':'📱',
+  'Boissons':'🥤','Cosmétique':'💄','Divers':'📦'
+};
+
+function renderProduits() {
+  var grid = document.getElementById('products-grid');
+  if(!_filtered.length) {
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1">'
+      +'<div class="empty-icon">🔍</div>'
+      +'<div>Aucun produit trouvé</div>'
+      +'<div style="font-size:12px;margin-top:6px">Essayez un autre terme de recherche</div>'
+      +'</div>';
+    return;
+  }
+  grid.innerHTML = '';
+  _filtered.forEach(function(p) {
+    var prix  = Number(p.price||p.prix||0);
+    var stock = Number(p.qty||p.stock||0);
+    var cat   = p.category||p.categorie||'Divers';
+    var emoji = EMOJIS[cat] || '📦';
+    var stockCls = stock>10?'stock-ok':stock>0?'stock-low':'stock-out';
+    var stockTxt = stock>10?'✅ En stock':stock>0?'⚠️ Stock limité ('+stock+')':'❌ Épuisé';
+    var isNew  = p.isNew || false;
+
+    var card = document.createElement('div');
+    card.className = 'product-card';
+    card.innerHTML =
+      '<div class="product-img">'
+        + (p.imageUrl ? '<img src="'+p.imageUrl+'" alt="'+p.name+'">' : emoji)
+        + (isNew ? '<span class="product-badge badge-new">NOUVEAU</span>' : '')
+        + (stock>0 && stock<=5 ? '<span class="product-badge badge-stock">Stock limité</span>' : '')
+        + (stock===0 ? '<span class="product-badge badge-promo">Épuisé</span>' : '')
+      +'</div>'
+      +'<div class="product-body">'
+        +'<div class="product-cat">'+cat+'</div>'
+        +'<div class="product-name">'+p.name+'</div>'
+        +'<div class="product-ref">'+(p.ref||p.id)+'</div>'
+        +'<div class="product-price">'+fmtNum(prix)+' F CFA</div>'
+        +'<div class="product-stock '+stockCls+'">'+stockTxt+'</div>'
+      +'</div>'
+      +'<div class="product-footer">'
+        +'<button class="btn-add" '+(stock===0?'disabled':'')
+          +' onclick="ajouterAuPanier(\''+p.id+'\')">🛒 Ajouter</button>'
+        +'<button class="btn-detail" onclick="ouvrirDetail(\''+p.id+'\')">👁</button>'
+      +'</div>';
+    grid.appendChild(card);
+  });
+}
+
+// ── Détail produit ────────────────────────────────
+function ouvrirDetail(id) {
+  var p = _products.find(function(x){ return x.id===id; });
+  if(!p) return;
+  _modalProd = p;
+  var prix  = Number(p.price||p.prix||0);
+  var stock = Number(p.qty||p.stock||0);
+  var cat   = p.category||p.categorie||'Divers';
+  var emoji = EMOJIS[cat] || '📦';
+
+  document.getElementById('mprod-img').innerHTML = p.imageUrl
+    ? '<img src="'+p.imageUrl+'" style="width:100%;height:100%;object-fit:cover">' : emoji;
+  document.getElementById('mprod-cat').textContent   = cat;
+  document.getElementById('mprod-name').textContent  = p.name;
+  document.getElementById('mprod-price').textContent = fmtNum(prix)+' F CFA';
+  document.getElementById('mprod-desc').textContent  = p.description || p.desc || 'Aucune description disponible.';
+  document.getElementById('mprod-stock').innerHTML   = stock>0
+    ? '<span style="color:var(--green)">✅ En stock — '+stock+' disponible(s)</span>'
+    : '<span style="color:var(--red)">❌ Rupture de stock</span>';
+  document.getElementById('mprod-btn').disabled = stock===0;
+  openModal('modal-produit');
+}
+
+function ajouterDepuisModal() {
+  if(_modalProd) { ajouterAuPanier(_modalProd.id); closeModal('modal-produit'); }
+}
+
+// ── Panier ────────────────────────────────────────
+function ajouterAuPanier(id) {
+  var p = _products.find(function(x){ return x.id===id; });
+  if(!p) return;
+  var stock = Number(p.qty||p.stock||0);
+  var item  = _cart.find(function(i){ return i.id===id; });
+  if(item) {
+    if(item.qty >= stock && stock > 0) { toast('⚠️ Stock insuffisant'); return; }
+    item.qty++;
+  } else {
+    _cart.push({id:id, name:p.name, price:Number(p.price||p.prix||0), qty:1,
+      cat:p.category||p.categorie||'Divers'});
+  }
+  updateCartBadge();
+  renderCartItems();
+  toast('✅ '+p.name+' ajouté au panier');
+}
+
+function retirerDuPanier(id) {
+  var item = _cart.find(function(i){ return i.id===id; });
+  if(!item) return;
+  item.qty--;
+  if(item.qty <= 0) _cart = _cart.filter(function(i){ return i.id!==id; });
+  updateCartBadge();
+  renderCartItems();
+}
+
+function supprimerDuPanier(id) {
+  _cart = _cart.filter(function(i){ return i.id!==id; });
+  updateCartBadge();
+  renderCartItems();
+}
+
+function updateCartBadge() {
+  var total = _cart.reduce(function(s,i){ return s+i.qty; },0);
+  var badge = document.getElementById('cart-badge');
+  badge.textContent = total;
+  badge.classList.toggle('show', total>0);
+}
+
+function renderCartItems() {
+  var el     = document.getElementById('cart-items');
+  var footer = document.getElementById('cart-footer');
+  if(!_cart.length) {
+    el.innerHTML = '<div class="cart-empty">🛒<br>Votre panier est vide</div>';
+    footer.style.display = 'none';
+    return;
+  }
+  var total = _cart.reduce(function(s,i){ return s+i.price*i.qty; },0);
+  document.getElementById('cart-total').textContent = fmtNum(total)+' F CFA';
+  footer.style.display = 'block';
+
+  el.innerHTML = '';
+  _cart.forEach(function(item) {
+    var div = document.createElement('div');
+    div.className = 'cart-item';
+    var emoji = EMOJIS[item.cat] || '📦';
+    div.innerHTML =
+      '<div class="cart-item-icon">'+emoji+'</div>'
+      +'<div style="flex:1;min-width:0">'
+        +'<div class="cart-item-name">'+item.name+'</div>'
+        +'<div class="cart-item-price">'+fmtNum(item.price)+' F</div>'
+        +'<div class="cart-qty">'
+          +'<button class="qty-btn" data-id="'+item.id+'" onclick="retirerDuPanier(this.dataset.id)">−</button>'
+          +'<span class="qty-val">'+item.qty+'</span>'
+          +'<button class="qty-btn" data-id="'+item.id+'" onclick="ajouterAuPanier(this.dataset.id)">+</button>'
+          +'<span style="font-size:12px;color:var(--txt3);margin-left:6px">= '+fmtNum(item.price*item.qty)+' F</span>'
+        +'</div>'
+      +'</div>'
+      +'<button class="cart-del" data-id="'+item.id+'" onclick="supprimerDuPanier(this.dataset.id)">🗑</button>';
+    el.appendChild(div);
+  });
+}
+
+function toggleCart() {
+  var overlay = document.getElementById('cart-overlay');
+  var panel   = document.getElementById('cart-panel');
+  overlay.classList.toggle('open');
+  panel.classList.toggle('open');
+  if(panel.classList.contains('open')) renderCartItems();
+}
+
+// ── Commande ──────────────────────────────────────
+function ouvrirCommande() {
+  if(!_cart.length) { toast('Votre panier est vide'); return; }
+  var total = _cart.reduce(function(s,i){ return s+i.price*i.qty; },0);
+  document.getElementById('cmd-total-val').textContent = fmtNum(total)+' F CFA';
+  document.getElementById('cmd-items-recap').innerHTML =
+    _cart.map(function(i){ return i.qty+'× '+i.name; }).join('<br>');
+  toggleCart();
+  openModal('modal-commande');
+}
+
+function confirmerCommande() {
+  var nom     = (document.getElementById('cmd-nom').value||'').trim();
+  var tel     = (document.getElementById('cmd-tel').value||'').trim();
+  var adresse = (document.getElementById('cmd-adresse').value||'').trim();
+  var paiement= document.getElementById('cmd-paiement').value;
+  var notes   = (document.getElementById('cmd-notes').value||'').trim();
+
+  if(!nom||!tel) { toast('❌ Nom et téléphone obligatoires'); return; }
+
+  var ref   = 'CMD-'+Date.now().toString(36).toUpperCase();
+  var total = _cart.reduce(function(s,i){ return s+i.price*i.qty; },0);
+  var date  = new Date().toLocaleString('fr-FR');
+
+  // Sauvegarder dans Firebase
+  var FB = window._FB;
+  if(FB) {
+    try {
+      var commande = {
+        ref, entId:_entId, nom, tel, adresse, paiement, notes,
+        items:_cart.slice(), total, date, statut:'En attente',
+        creeLe: new Date().toISOString()
+      };
+      // Écrire dans Firestore
+      import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js')
+        .then(function(m) {
+          m.addDoc(m.collection(FB.db, 'commandes_boutique'), commande)
+           .then(function(){ console.log('Commande Firebase:', ref); })
+           .catch(function(e){ console.warn('Firebase commande:', e); });
+        });
+    } catch(e){}
+  }
+
+  // Vider le panier
+  _cart = [];
+  updateCartBadge();
+
+  closeModal('modal-commande');
+
+  // Confirmation
+  document.getElementById('confirm-ref').textContent = 'Référence: '+ref;
+  document.getElementById('confirm-msg').innerHTML =
+    'Merci <strong>'+nom+'</strong> ! Votre commande de <strong>'+fmtNum(total)+' F CFA</strong> '
+    +'a bien été enregistrée.<br><br>'
+    +'Nous vous contacterons au <strong>'+tel+'</strong> pour confirmer.<br>'
+    +'Paiement prévu: '+paiement;
+  openModal('modal-confirm');
+  toast('✅ Commande '+ref+' envoyée !');
+}
+
+// ── Utils ─────────────────────────────────────────
+function openModal(id) {
+  var el = document.getElementById(id);
+  if(el) el.classList.add('open');
+}
+function closeModal(id) {
+  var el = document.getElementById(id);
+  if(el) el.classList.remove('open');
+}
+function fmtNum(n){ return Number(n||0).toLocaleString('fr-FR'); }
+
+var _toastT;
+function toast(msg) {
+  var el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(_toastT);
+  _toastT = setTimeout(function(){ el.classList.remove('show'); }, 3000);
+}
+</script>
+</body>
+</html>
