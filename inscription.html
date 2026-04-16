@@ -2,291 +2,258 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Inscription Membre — DpGestPro</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Inscription en ligne — Institut Académique</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap">
 <style>
-  :root {
-    --bg:#0f0f13; --surface:#1a1a22; --surface2:#22222e;
-    --border:rgba(255,255,255,.08); --text:#f0f0f5; --text2:#a0a0b0;
-    --text3:#606070; --accent:#f5a623; --success:#43e97b; --danger:#ff4757;
-  }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
-
-  .header {
-    background:var(--surface); border-bottom:1px solid var(--border);
-    padding:14px 20px; display:flex; align-items:center; gap:12px;
-  }
-  .logo { font-family:'Syne',sans-serif; font-weight:800; font-size:18px; }
-  .logo span { color:var(--accent); }
-  .ent-badge { margin-left:auto; font-size:12px; color:var(--text3); }
-
-  .container { max-width:700px; margin:0 auto; padding:30px 20px; }
-
-  .form-card {
-    background:var(--surface); border:1px solid var(--border);
-    border-radius:20px; overflow:hidden;
-  }
-  .form-hero {
-    background:linear-gradient(135deg, rgba(245,166,35,.15), rgba(245,166,35,.05));
-    border-bottom:1px solid var(--border); padding:30px; text-align:center;
-  }
-  .form-hero-icon { font-size:52px; margin-bottom:12px; }
-  .form-hero-title { font-family:'Syne',sans-serif; font-weight:800; font-size:24px; margin-bottom:8px; }
-  .form-hero-sub { color:var(--text2); font-size:14px; line-height:1.6; }
-  .form-ent-name { color:var(--accent); font-weight:700; font-size:16px; margin-top:8px; }
-
-  .form-body { padding:30px; }
-  .section-title {
-    font-family:'Syne',sans-serif; font-weight:700; font-size:13px;
-    text-transform:uppercase; letter-spacing:1px; color:var(--accent);
-    margin:24px 0 16px; display:flex; align-items:center; gap:8px;
-  }
-  .section-title::after { content:''; flex:1; height:1px; background:var(--border); }
-
-  .form-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
-  @media(max-width:520px) { .form-grid { grid-template-columns:1fr; } }
-  .full { grid-column:1/-1; }
-
-  .form-group { display:flex; flex-direction:column; gap:6px; }
-  .form-group label { font-size:12px; font-weight:600; color:var(--text2); text-transform:uppercase; letter-spacing:.5px; }
-  .form-group label .req { color:var(--danger); margin-left:2px; }
-  .form-group input, .form-group select, .form-group textarea {
-    padding:11px 14px; background:var(--surface2); border:1px solid var(--border);
-    border-radius:10px; color:var(--text); font-size:14px; font-family:'DM Sans',sans-serif;
-    outline:none; transition:border-color .2s;
-  }
-  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color:var(--accent); }
-  .form-group select option { background:var(--surface2); }
-
-  .radio-group { display:flex; gap:10px; flex-wrap:wrap; }
-  .radio-btn {
-    padding:8px 16px; background:var(--surface2); border:1px solid var(--border);
-    border-radius:8px; cursor:pointer; font-size:13px; transition:all .2s; user-select:none;
-  }
-  .radio-btn.selected { background:rgba(245,166,35,.15); border-color:var(--accent); color:var(--accent); font-weight:600; }
-
-  .btn-submit {
-    width:100%; padding:16px; background:var(--accent); color:#0f0f13;
-    border:none; border-radius:14px; font-family:'Syne',sans-serif;
-    font-weight:800; font-size:16px; cursor:pointer; transition:opacity .2s;
-    margin-top:24px;
-  }
-  .btn-submit:hover { opacity:.85; }
-  .btn-submit:disabled { opacity:.5; cursor:not-allowed; }
-
-  /* Écran succès */
-  #screen-success {
-    display:none; text-align:center; padding:60px 30px;
-  }
-  .success-icon { font-size:72px; margin-bottom:20px; }
-  .success-title { font-family:'Syne',sans-serif; font-weight:800; font-size:28px; margin-bottom:12px; color:var(--success); }
-  .success-sub { color:var(--text2); font-size:15px; line-height:1.7; margin-bottom:30px; }
-  .success-card {
-    background:rgba(67,233,123,.08); border:1px solid rgba(67,233,123,.2);
-    border-radius:16px; padding:20px; margin-bottom:24px; text-align:left;
-  }
-  .success-card-title { font-size:12px; font-weight:700; color:var(--success); text-transform:uppercase; letter-spacing:.5px; margin-bottom:12px; }
-  .success-info { display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid rgba(255,255,255,.05); font-size:13px; }
-  .success-info:last-child { border-bottom:none; }
-  .success-info span:first-child { color:var(--text2); }
-  .success-info span:last-child { font-weight:600; }
-
-  .btn-new { padding:12px 24px; background:var(--surface2); border:1px solid var(--border); border-radius:10px; color:var(--text); cursor:pointer; font-size:14px; }
-
-  .required-note { font-size:12px; color:var(--text3); margin-bottom:20px; }
-  .required-note span { color:var(--danger); }
-
-  #form-error { display:none; background:rgba(255,71,87,.1); border:1px solid rgba(255,71,87,.3); border-radius:10px; padding:12px 16px; font-size:13px; color:var(--danger); margin-top:16px; }
-
-  .progress-bar { height:4px; background:var(--surface2); border-radius:2px; margin-bottom:24px; overflow:hidden; }
-  .progress-fill { height:100%; background:var(--accent); border-radius:2px; transition:width .4s; width:0% }
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);min-height:100vh;color:#e0e6ff}
+.wrap{max-width:680px;margin:0 auto;padding:24px 16px 60px}
+/* Header */
+.header{text-align:center;padding:32px 0 24px}
+.school-logo{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#6c63ff);display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 16px;box-shadow:0 0 30px rgba(139,92,246,.4)}
+.school-name{font-size:22px;font-weight:900;color:#fff;margin-bottom:4px}
+.school-sub{font-size:13px;color:#8892b0}
+.badge-public{display:inline-block;background:rgba(139,92,246,.15);border:1px solid rgba(139,92,246,.3);border-radius:20px;padding:4px 14px;font-size:11px;font-weight:700;color:#8b5cf6;margin-top:8px}
+/* Card */
+.card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:24px;margin-bottom:16px}
+.card-title{font-size:14px;font-weight:700;color:#8b5cf6;text-transform:uppercase;letter-spacing:.5px;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+/* Form */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid1{display:grid;grid-template-columns:1fr;gap:12px}
+@media(max-width:500px){.grid2{grid-template-columns:1fr}}
+.fld{display:flex;flex-direction:column;gap:4px}
+.fld label{font-size:11px;font-weight:600;text-transform:uppercase;color:#8892b0}
+.fld input,.fld select,.fld textarea{
+  padding:10px 14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);
+  border-radius:10px;color:#e0e6ff;font-size:13px;font-family:inherit;outline:none;
+  transition:border-color .2s}
+.fld input:focus,.fld select:focus,.fld textarea:focus{border-color:#8b5cf6}
+.fld select option{background:#1a1a2e;color:#e0e6ff}
+.fld textarea{resize:vertical;min-height:70px}
+.req{color:#8b5cf6}
+/* Steps */
+.steps{display:flex;gap:8px;margin-bottom:20px;overflow-x:auto;padding-bottom:4px}
+.step{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer;transition:all .2s;border:1px solid transparent;color:#8892b0}
+.step.active{background:rgba(139,92,246,.15);border-color:rgba(139,92,246,.4);color:#8b5cf6}
+.step.done{color:#10b981}
+.step-num{width:22px;height:22px;border-radius:50%;background:rgba(139,92,246,.2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800}
+.step.done .step-num{background:rgba(16,185,129,.15);color:#10b981}
+/* Buttons */
+.btn-row{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+.btn-prev{padding:11px 22px;background:transparent;border:1px solid rgba(255,255,255,.15);border-radius:10px;color:#8892b0;cursor:pointer;font-size:13px;font-weight:600}
+.btn-next{padding:11px 24px;background:linear-gradient(135deg,#8b5cf6,#6c63ff);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;transition:opacity .2s}
+.btn-next:hover{opacity:.9}
+.btn-next:disabled{opacity:.5;cursor:not-allowed}
+/* Frais card */
+.frais-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.frais-item:last-child{border:none}
+.frais-label{font-size:13px;color:#8892b0}
+.frais-amount{font-size:14px;font-weight:700;color:#8b5cf6}
+.frais-total{background:rgba(139,92,246,.1);border-radius:10px;padding:14px;margin-top:12px;display:flex;justify-content:space-between;align-items:center}
+.frais-total-label{font-size:13px;font-weight:700}
+.frais-total-amount{font-size:20px;font-weight:900;color:#8b5cf6}
+/* Confirmation */
+.confirm-box{text-align:center;padding:32px 0}
+.confirm-icon{font-size:64px;margin-bottom:16px}
+.confirm-title{font-size:20px;font-weight:900;margin-bottom:8px}
+.confirm-sub{font-size:13px;color:#8892b0;margin-bottom:20px}
+.confirm-code{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:12px;padding:16px;display:inline-block;min-width:220px}
+.confirm-code-label{font-size:11px;color:#10b981;font-weight:700;text-transform:uppercase;margin-bottom:4px}
+.confirm-code-value{font-size:24px;font-weight:900;color:#10b981;letter-spacing:2px}
+/* Loading */
+.loading{text-align:center;padding:20px;color:#8892b0;font-size:13px}
+.spinner{display:inline-block;width:20px;height:20px;border:2px solid rgba(139,92,246,.3);border-top-color:#8b5cf6;border-radius:50%;animation:spin .8s linear infinite;margin-right:8px;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* Alert */
+.alert{padding:10px 14px;border-radius:10px;font-size:12px;margin-bottom:12px}
+.alert-err{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#ef4444}
+.alert-ok{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);color:#10b981}
+/* Annee panel */
+.annee-badge{background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.2);border-radius:8px;padding:8px 14px;font-size:12px;color:#60a5fa;margin-bottom:16px;text-align:center}
 </style>
 </head>
 <body>
 
-<div class="header">
-  <div class="logo">DpGest<span>Pro</span></div>
-  <div id="ent-badge" class="ent-badge">⛪ Chargement...</div>
-</div>
+<div class="wrap">
 
-<div class="container">
+  <!-- Header -->
+  <div class="header">
+    <div class="school-logo">🎓</div>
+    <div class="school-name" id="school-name">Institut Académique</div>
+    <div class="school-sub" id="school-sub">Formulaire d'inscription en ligne</div>
+    <span class="badge-public">Inscription ouverte — Année 2025-2026</span>
+  </div>
 
-  <!-- FORMULAIRE -->
-  <div class="form-card" id="screen-form">
-    <div class="form-hero">
-      <div class="form-hero-icon">✝️</div>
-      <div class="form-hero-title">Formulaire d'Inscription</div>
-      <div class="form-hero-sub">Rejoignez notre communauté de foi.<br>Remplissez ce formulaire pour vous inscrire comme membre.</div>
-      <div class="form-ent-name" id="hero-ent-name">⛪ Chargement...</div>
+  <!-- Étapes -->
+  <div class="steps">
+    <div class="step active" id="step-1"><span class="step-num">1</span> Élève</div>
+    <div class="step" id="step-2"><span class="step-num">2</span> Parent</div>
+    <div class="step" id="step-3"><span class="step-num">3</span> Scolarité</div>
+    <div class="step" id="step-4"><span class="step-num">4</span> Frais</div>
+    <div class="step" id="step-5"><span class="step-num">5</span> Confirmation</div>
+  </div>
+
+  <div id="alert-box" style="display:none"></div>
+
+  <!-- ÉTAPE 1: Infos élève -->
+  <div id="panel-1">
+    <div class="card">
+      <div class="card-title">👦 Informations de l'élève</div>
+      <div class="annee-badge">📅 Inscription pour l'année scolaire 2025-2026</div>
+      <div class="grid2">
+        <div class="fld"><label>Nom <span class="req">*</span></label><input id="e-nom" type="text" placeholder="NOM DE FAMILLE"></div>
+        <div class="fld"><label>Prénom <span class="req">*</span></label><input id="e-prenom" type="text" placeholder="Prénom(s)"></div>
+        <div class="fld"><label>Date de naissance <span class="req">*</span></label><input id="e-ddn" type="date"></div>
+        <div class="fld"><label>Sexe <span class="req">*</span></label>
+          <select id="e-sexe">
+            <option value="">-- Choisir --</option>
+            <option value="M">Masculin</option>
+            <option value="F">Féminin</option>
+          </select>
+        </div>
+        <div class="fld"><label>Lieu de naissance</label><input id="e-lieu" type="text" placeholder="Ville de naissance"></div>
+        <div class="fld"><label>Nationalité</label><input id="e-nat" type="text" value="Béninoise"></div>
+      </div>
     </div>
+    <div class="btn-row">
+      <button class="btn-next" onclick="nextStep(1)">Suivant → Parent</button>
+    </div>
+  </div>
 
-    <div class="form-body">
-      <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
-      <div class="required-note"><span>*</span> Champs obligatoires</div>
-
-      <!-- IDENTITÉ -->
-      <div class="section-title">👤 Identité personnelle</div>
-      <div class="form-grid">
-        <div class="form-group full">
-          <label>Nom complet <span class="req">*</span></label>
-          <input type="text" id="f-nom" placeholder="Prénom(s) et Nom de famille" oninput="updateProgress()">
-        </div>
-        <div class="form-group">
-          <label>Sexe <span class="req">*</span></label>
-          <div class="radio-group" id="rg-sexe">
-            <div class="radio-btn" onclick="selectRadio('sexe','Masculin',this)">👨 Masculin</div>
-            <div class="radio-btn" onclick="selectRadio('sexe','Féminin',this)">👩 Féminin</div>
-          </div>
-          <input type="hidden" id="f-sexe">
-        </div>
-        <div class="form-group">
-          <label>Date de naissance</label>
-          <input type="date" id="f-naissance">
-        </div>
-        <div class="form-group">
-          <label>Situation matrimoniale</label>
-          <select id="f-matrimonial">
-            <option value="">-- Sélectionner --</option>
-            <option>Célibataire</option>
-            <option>Marié(e)</option>
-            <option>Veuf/Veuve</option>
-            <option>Divorcé(e)</option>
+  <!-- ÉTAPE 2: Infos parent -->
+  <div id="panel-2" style="display:none">
+    <div class="card">
+      <div class="card-title">👨‍👩‍👦 Informations du parent / tuteur</div>
+      <div class="grid2">
+        <div class="fld"><label>Nom complet <span class="req">*</span></label><input id="p-nom" type="text" placeholder="Nom du parent ou tuteur"></div>
+        <div class="fld"><label>Lien avec l'élève</label>
+          <select id="p-lien">
+            <option value="Père">Père</option><option value="Mère">Mère</option>
+            <option value="Tuteur">Tuteur</option><option value="Autre">Autre</option>
           </select>
         </div>
-        <div class="form-group">
-          <label>Nationalité</label>
-          <input type="text" id="f-nationalite" placeholder="Ex: Béninoise">
-        </div>
-        <div class="form-group">
-          <label>Profession</label>
-          <input type="text" id="f-profession" placeholder="Ex: Enseignant, Commerçant...">
-        </div>
+        <div class="fld"><label>Téléphone principal <span class="req">*</span></label><input id="p-tel" type="tel" placeholder="+229 ..."></div>
+        <div class="fld"><label>Téléphone secondaire</label><input id="p-tel2" type="tel" placeholder="+229 ..."></div>
+        <div class="fld" style="grid-column:1/-1"><label>Email (optionnel)</label><input id="p-email" type="email" placeholder="email@..."></div>
+        <div class="fld" style="grid-column:1/-1"><label>Adresse / Quartier</label><input id="p-adresse" type="text" placeholder="Quartier, ville..."></div>
+        <div class="fld"><label>Profession</label><input id="p-profession" type="text" placeholder="Profession"></div>
+        <div class="fld"><label>Lieu de travail</label><input id="p-travail" type="text" placeholder="Entreprise / Administration"></div>
       </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-prev" onclick="prevStep(2)">← Retour</button>
+      <button class="btn-next" onclick="nextStep(2)">Suivant → Scolarité</button>
+    </div>
+  </div>
 
-      <!-- CONTACT -->
-      <div class="section-title">📞 Coordonnées</div>
-      <div class="form-grid">
-        <div class="form-group">
-          <label>Téléphone principal <span class="req">*</span></label>
-          <input type="tel" id="f-tel" placeholder="+229 XX XX XX XX" oninput="updateProgress()">
-        </div>
-        <div class="form-group">
-          <label>Téléphone secondaire</label>
-          <input type="tel" id="f-tel2" placeholder="+229 XX XX XX XX">
-        </div>
-        <div class="form-group">
-          <label>Email</label>
-          <input type="email" id="f-email" placeholder="votre@email.com">
-        </div>
-        <div class="form-group">
-          <label>Ville / Localité <span class="req">*</span></label>
-          <input type="text" id="f-ville" placeholder="Ex: Cotonou" oninput="updateProgress()">
-        </div>
-        <div class="form-group full">
-          <label>Quartier / Adresse</label>
-          <input type="text" id="f-quartier" placeholder="Ex: Fidjrossè, rue...">
-        </div>
-      </div>
-
-      <!-- FOI -->
-      <div class="section-title">✝️ Vie spirituelle</div>
-      <div class="form-grid">
-        <div class="form-group">
-          <label>Date de conversion / Nouveau né</label>
-          <input type="date" id="f-conversion">
-        </div>
-        <div class="form-group">
-          <label>Date de baptême</label>
-          <input type="date" id="f-bapteme">
-        </div>
-        <div class="form-group">
-          <label>Baptisé(e) du Saint-Esprit ?</label>
-          <div class="radio-group" id="rg-esprit">
-            <div class="radio-btn" onclick="selectRadio('esprit','Oui',this)">✅ Oui</div>
-            <div class="radio-btn" onclick="selectRadio('esprit','Non',this)">❌ Non</div>
-            <div class="radio-btn" onclick="selectRadio('esprit','En cours',this)">🙏 En cours</div>
-          </div>
-          <input type="hidden" id="f-esprit">
-        </div>
-        <div class="form-group">
-          <label>Ancienne église / Vient de</label>
-          <input type="text" id="f-ancienne-eglise" placeholder="Nom de l'ancienne église">
-        </div>
-        <div class="form-group full">
-          <label>Ministère souhaité</label>
-          <select id="f-ministere">
-            <option value="">-- Aucun pour l'instant --</option>
-            <option value="jeunes">🎯 Ministère des Jeunes</option>
-            <option value="femmes">👩 Ministère des Femmes</option>
-            <option value="enfants">🧒 Ministère des Enfants</option>
-            <option value="hommes">👨 Communion des Hommes</option>
-            <option value="louange">🎵 Louange & Adoration</option>
-            <option value="intercession">🙏 Intercession</option>
-            <option value="evangelisation">📢 Évangélisation</option>
+  <!-- ÉTAPE 3: Scolarité -->
+  <div id="panel-3" style="display:none">
+    <div class="card">
+      <div class="card-title">📚 Scolarité & Classe</div>
+      <div class="grid2">
+        <div class="fld"><label>Classe demandée <span class="req">*</span></label>
+          <select id="s-classe" onchange="updateFrais()">
+            <option value="">-- Choisir la classe --</option>
+            <optgroup label="🏫 Primaire">
+              <option>CP1</option><option>CP2</option>
+              <option>CE1</option><option>CE2</option>
+              <option>CM1</option><option>CM2</option>
+            </optgroup>
+            <optgroup label="🏫 Collège">
+              <option>6ème</option><option>5ème</option>
+              <option>4ème</option><option>3ème</option>
+            </optgroup>
+            <optgroup label="🏫 Lycée">
+              <option>2nde</option><option>1ère A</option><option>1ère C</option>
+              <option>Tle A</option><option>Tle C</option><option>Tle D</option>
+            </optgroup>
           </select>
         </div>
-        <div class="form-group full">
-          <label>Dons / Talents spirituels</label>
-          <input type="text" id="f-dons" placeholder="Ex: Chant, Prédication, Administration...">
+        <div class="fld"><label>Type d'inscription</label>
+          <select id="s-type" onchange="updateFrais()">
+            <option value="nouveau">Nouveau élève</option>
+            <option value="ancien">Ancien élève (réinscription)</option>
+            <option value="transfert">Transfert d'une autre école</option>
+          </select>
         </div>
-        <div class="form-group full">
-          <label>Message / Témoignage (optionnel)</label>
-          <textarea id="f-message" rows="3" placeholder="Partagez brièvement votre témoignage ou raison d'adhésion..."></textarea>
-        </div>
-      </div>
-
-      <!-- URGENCE -->
-      <div class="section-title">🆘 Contact d'urgence</div>
-      <div class="form-grid">
-        <div class="form-group">
-          <label>Nom du contact</label>
-          <input type="text" id="f-urgence-nom" placeholder="Nom complet">
-        </div>
-        <div class="form-group">
-          <label>Téléphone d'urgence</label>
-          <input type="tel" id="f-urgence-tel" placeholder="+229 XX XX XX XX">
-        </div>
-        <div class="form-group">
-          <label>Lien de parenté</label>
-          <input type="text" id="f-urgence-lien" placeholder="Ex: Époux/Épouse, Parent...">
+        <div class="fld"><label>Ancienne école (si transfert)</label><input id="s-ancienne-ecole" type="text" placeholder="Nom de l'école précédente"></div>
+        <div class="fld"><label>Dernière classe fréquentée</label><input id="s-derniere-classe" type="text" placeholder="Ex: CP2, CE1..."></div>
+        <div class="fld" style="grid-column:1/-1"><label>Besoins particuliers / Informations utiles</label>
+          <textarea id="s-notes" placeholder="Allergies, handicap, suivi médical particulier..."></textarea>
         </div>
       </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-prev" onclick="prevStep(3)">← Retour</button>
+      <button class="btn-next" onclick="nextStep(3)">Suivant → Frais</button>
+    </div>
+  </div>
 
-      <div id="form-error"></div>
+  <!-- ÉTAPE 4: Frais de scolarité -->
+  <div id="panel-4" style="display:none">
+    <div class="card">
+      <div class="card-title">💰 Frais de scolarité</div>
+      <div id="frais-detail">
+        <div class="loading"><span class="spinner"></span>Sélectionnez une classe...</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">🤝 Engagement de paiement</div>
+      <div class="fld">
+        <label>Mode de paiement préféré</label>
+        <select id="f-mode">
+          <option value="tranche">Par tranches (3 versements)</option>
+          <option value="integral">Paiement intégral</option>
+          <option value="moov">Mobile Money (Moov Africa)</option>
+          <option value="mtn">Mobile Money (MTN)</option>
+        </select>
+      </div>
+      <div style="margin-top:14px;padding:12px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:10px;font-size:12px;color:#f59e0b;line-height:1.7">
+        ⚠️ <strong>Note :</strong> Le paiement des frais d'inscription de la 1ère tranche est requis dans les 48h suivant la confirmation de votre inscription. L'administration vous contactera.
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-prev" onclick="prevStep(4)">← Retour</button>
+      <button class="btn-next" onclick="submitInscription()" id="btn-submit">✅ Soumettre la demande</button>
+    </div>
+  </div>
 
-      <button class="btn-submit" id="btn-submit" onclick="soumettre()">
-        ✝️ Soumettre mon inscription
-      </button>
-
-      <div style="text-align:center;margin-top:16px;font-size:12px;color:var(--text3)">
-        Vos données sont sécurisées et utilisées uniquement par l'église.
+  <!-- ÉTAPE 5: Confirmation -->
+  <div id="panel-5" style="display:none">
+    <div class="card">
+      <div class="confirm-box">
+        <div class="confirm-icon">🎉</div>
+        <div class="confirm-title">Demande envoyée !</div>
+        <div class="confirm-sub">Votre demande d'inscription a été transmise à l'administration.<br>Conservez votre numéro de dossier.</div>
+        <div class="confirm-code">
+          <div class="confirm-code-label">Numéro de dossier</div>
+          <div class="confirm-code-value" id="confirm-code">---</div>
+        </div>
+        <div style="margin-top:20px;font-size:12px;color:#8892b0;line-height:1.8">
+          📞 L'administration vous contactera sous <strong>24-48h</strong><br>
+          📍 <span id="confirm-school-addr">Institut Académique — Bénin</span><br>
+          ✅ Un résumé a été enregistré
+        </div>
+        <button onclick="window.location.reload()" style="margin-top:20px;padding:10px 24px;background:rgba(139,92,246,.15);border:1px solid rgba(139,92,246,.3);border-radius:10px;color:#8b5cf6;cursor:pointer;font-size:13px;font-weight:600">
+          ➕ Nouvelle inscription
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- SUCCÈS -->
-  <div id="screen-success" class="form-card">
-    <div class="success-icon">🎉</div>
-    <div class="success-title">Inscription réussie !</div>
-    <div class="success-sub">Bienvenue dans la famille de <strong id="success-ent-name"></strong> !<br>Votre inscription a été enregistrée avec succès. Le responsable prendra contact avec vous prochainement.</div>
-    <div class="success-card">
-      <div class="success-card-title">📋 Récapitulatif</div>
-      <div id="success-recap"></div>
-    </div>
-    <button class="btn-new" onclick="nouvelleInscription()">➕ Inscrire une autre personne</button>
-    <div style="margin-top:16px;font-size:12px;color:var(--text3)">Propulsé par DpGestPro</div>
-  </div>
-
 </div>
 
-<!-- FIREBASE -->
-<script type="module">
-import { initializeApp }           from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-import { getFirestore, collection, addDoc, doc, getDoc, serverTimestamp }
-  from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+// ═══════════════════════════════════════════════════
+// INSCRIPTION PUBLIQUE — DpGestPro
+// ═══════════════════════════════════════════════════
 
+// Config Firebase
 const firebaseConfig = {
   apiKey:            "AIzaSyDCqoYZLBK0ipbotTejMCAvYGxrkomGIGk",
   authDomain:        "dpgestpro.firebaseapp.com",
@@ -295,159 +262,194 @@ const firebaseConfig = {
   messagingSenderId: "795000345158",
   appId:             "1:795000345158:web:b33a6f77ce9e98bff87047"
 };
+firebase.initializeApp(firebaseConfig);
+var db = firebase.firestore();
 
-const fbApp = initializeApp(firebaseConfig, 'inscription');
-const db    = getFirestore(fbApp);
+// Lire ?ent= dans l'URL
+var urlParams = new URLSearchParams(window.location.search);
+var entId = urlParams.get('ent') || 'ecole_demo';
 
-// Lire paramètre ?ent= dans l'URL
-const params = new URLSearchParams(window.location.search);
-const entId  = params.get('ent') || 'mvcp_couffo';
+// Infos école par entId (fallback si Firestore indisponible)
+var SCHOOLS = {
+  ecole_demo: { nom:'Institut Académique', ville:'Bénin', tel:'+229 ...',
+    frais:{ primaire:35000, college:50000, lycee:65000 } },
+};
+var school = SCHOOLS[entId] || SCHOOLS['ecole_demo'];
 
-// Charger nom église
-let entNom = entId;
-async function chargerEglise() {
-  try {
-    const snap = await getDoc(doc(db, 'entreprises/' + entId + '/eglise', 'fiche'));
-    if(snap.exists() && snap.data().nom) {
-      entNom = snap.data().nom;
-    } else {
-      // Noms par défaut selon entId
-      const noms = { mvcp_couffo:'MVCP COUFFO', dpgestpro:'DpGestPro', ong2md:'ONG 2MD' };
-      entNom = noms[entId] || entId.toUpperCase();
+// Afficher le nom de l'école
+document.getElementById('school-name').textContent = school.nom;
+document.getElementById('school-sub').textContent = 'Formulaire d\'inscription en ligne — ' + school.nom;
+document.title = 'Inscription — ' + school.nom;
+document.getElementById('confirm-school-addr').textContent = school.nom + ' — ' + school.ville;
+
+// Charger infos depuis Firestore si disponible
+db.collection('entreprises').doc(entId).get().then(function(doc) {
+  if(doc.exists) {
+    var d = doc.data();
+    if(d.nom) {
+      document.getElementById('school-name').textContent = d.nom;
+      document.getElementById('school-sub').textContent = 'Formulaire d\'inscription — ' + d.nom;
+      document.title = 'Inscription — ' + d.nom;
     }
-  } catch(e) {
-    const noms = { mvcp_couffo:'MVCP COUFFO', dpgestpro:'DpGestPro', ong2md:'ONG 2MD' };
-    entNom = noms[entId] || entId.toUpperCase();
   }
-  document.getElementById('ent-badge').textContent      = '⛪ ' + entNom;
-  document.getElementById('hero-ent-name').textContent  = '⛪ ' + entNom;
-  document.getElementById('success-ent-name').textContent = entNom;
-  document.title = 'Inscription — ' + entNom;
+}).catch(function(){});
+
+// ── Frais par niveau ──
+var FRAIS = {
+  'CP1':15000,'CP2':15000,'CE1':17000,'CE2':17000,'CM1':19000,'CM2':19000,
+  '6ème':22000,'5ème':22000,'4ème':24000,'3ème':24000,
+  '2nde':28000,'1ère A':30000,'1ère C':32000,
+  'Tle A':33000,'Tle C':35000,'Tle D':35000
+};
+var INSCRIPTION_FEE = 5000;
+
+function updateFrais() {
+  var classe = document.getElementById('s-classe').value;
+  var type   = document.getElementById('s-type').value;
+  var el     = document.getElementById('frais-detail');
+  if(!classe) {
+    el.innerHTML = '<div class="loading">Sélectionnez une classe...</div>';
+    return;
+  }
+  var scol  = FRAIS[classe] || 20000;
+  var insc  = type==='ancien' ? 2000 : INSCRIPTION_FEE;
+  var total = scol + insc;
+  var t1    = Math.ceil(total * 0.5);
+  var t2    = Math.ceil(total * 0.3);
+  var t3    = total - t1 - t2;
+  
+  el.innerHTML =
+    '<div class="frais-item"><span class="frais-label">Frais d\'inscription ('+
+      (type==='ancien'?'réinscription':'nouveau')+')</span><span class="frais-amount">'+
+      t(insc)+'</span></div>'+
+    '<div class="frais-item"><span class="frais-label">Frais de scolarité — '+classe+
+      '</span><span class="frais-amount">'+t(scol)+'</span></div>'+
+    '<div class="frais-total"><span class="frais-total-label">💰 Total annuel</span><span class="frais-total-amount">'+t(total)+'</span></div>'+
+    '<div style="margin-top:12px;font-size:12px;color:#8892b0">'+
+    '<div style="margin-bottom:4px">📅 Paiement par tranches :</div>'+
+    '<div>• 1ère tranche (50%) : '+t(t1)+'</div>'+
+    '<div>• 2ème tranche (30%) : '+t(t2)+'</div>'+
+    '<div>• 3ème tranche (20%) : '+t(t3)+'</div></div>';
+    
+  window._fraisTotal = total;
+  window._fraisInsc  = insc;
+  window._fraisScol  = scol;
 }
-chargerEglise();
 
-// Valeurs des radio buttons
-const radioVals = {};
+function t(n) { return n.toLocaleString('fr-FR')+' F CFA'; }
 
-window.selectRadio = function(name, val, el) {
-  radioVals[name] = val;
-  document.getElementById('f-' + name).value = val;
-  const group = document.getElementById('rg-' + name);
-  if(group) group.querySelectorAll('.radio-btn').forEach(b => b.classList.remove('selected'));
-  if(el) el.classList.add('selected');
-  updateProgress();
-};
+// ── Navigation étapes ──
+var currentStep = 1;
 
-// Barre de progression
-window.updateProgress = function() {
-  const fields = ['f-nom','f-tel','f-ville','f-sexe'];
-  const filled = fields.filter(f => {
-    const el = document.getElementById(f);
-    return el && el.value.trim();
-  }).length;
-  const pct = Math.round(filled / fields.length * 100);
-  const bar = document.getElementById('progress-fill');
-  if(bar) bar.style.width = pct + '%';
-};
-
-// Soumettre
-window.soumettre = async function() {
-  const nom  = document.getElementById('f-nom').value.trim();
-  const tel  = document.getElementById('f-tel').value.trim();
-  const ville= document.getElementById('f-ville').value.trim();
-  const sexe = document.getElementById('f-sexe').value;
-  const errEl= document.getElementById('form-error');
-  const btn  = document.getElementById('btn-submit');
-
-  errEl.style.display = 'none';
-
-  if(!nom)  { showErr('❌ Le nom complet est obligatoire'); return; }
-  if(!tel)  { showErr('❌ Le numéro de téléphone est obligatoire'); return; }
-  if(!ville){ showErr('❌ La ville est obligatoire'); return; }
-  if(!sexe) { showErr('❌ Veuillez sélectionner votre sexe'); return; }
-
-  btn.disabled    = true;
-  btn.textContent = '⏳ Envoi en cours...';
-
-  const data = {
-    // Identité
-    nom        : nom,
-    sexe       : sexe,
-    naissance  : document.getElementById('f-naissance').value,
-    matrimonial: document.getElementById('f-matrimonial').value,
-    nationalite: document.getElementById('f-nationalite').value,
-    profession : document.getElementById('f-profession').value,
-    // Contact
-    tel        : tel,
-    tel2       : document.getElementById('f-tel2').value,
-    email      : document.getElementById('f-email').value,
-    ville      : ville,
-    quartier   : document.getElementById('f-quartier').value,
-    // Vie spirituelle
-    conversion : document.getElementById('f-conversion').value,
-    bapteme    : document.getElementById('f-bapteme').value,
-    esprit     : document.getElementById('f-esprit').value,
-    ancienne_eglise: document.getElementById('f-ancienne-eglise').value,
-    ministere  : document.getElementById('f-ministere').value,
-    dons       : document.getElementById('f-dons').value,
-    message    : document.getElementById('f-message').value,
-    // Urgence
-    urgence_nom : document.getElementById('f-urgence-nom').value,
-    urgence_tel : document.getElementById('f-urgence-tel').value,
-    urgence_lien: document.getElementById('f-urgence-lien').value,
-    // Métadonnées
-    fonction   : 'membre',
-    statut     : 'Actif',
-    source     : 'formulaire_public',
-    adhesion   : new Date().toISOString().split('T')[0],
-    createdAt  : serverTimestamp()
-  };
-
-  try {
-    await addDoc(collection(db, 'entreprises/' + entId + '/membres'), data);
-
-    // Afficher succès
-    document.getElementById('screen-form').style.display    = 'none';
-    document.getElementById('screen-success').style.display = 'block';
-
-    // Récapitulatif
-    const fonctions = { jeunes:'Ministère des Jeunes', femmes:'Ministère des Femmes', enfants:'Ministère des Enfants', hommes:'Communion des Hommes', louange:'Louange & Adoration', intercession:'Intercession', evangelisation:'Évangélisation' };
-    document.getElementById('success-recap').innerHTML = [
-      ['Nom',       nom],
-      ['Sexe',      sexe],
-      ['Téléphone', tel],
-      ['Ville',     ville],
-      ['Ministère', fonctions[data.ministere] || 'Non précisé'],
-      ['Date inscription', new Date().toLocaleDateString('fr-FR')],
-    ].map(([k,v]) => `<div class="success-info"><span>${k}</span><span>${v||'-'}</span></div>`).join('');
-
-    window.scrollTo(0, 0);
-  } catch(e) {
-    btn.disabled    = false;
-    btn.textContent = '✝️ Soumettre mon inscription';
-    showErr('❌ Erreur : ' + e.message);
+function showStep(n) {
+  for(var i=1;i<=5;i++) {
+    var panel = document.getElementById('panel-'+i);
+    var step  = document.getElementById('step-'+i);
+    if(panel) panel.style.display = i===n ? 'block' : 'none';
+    if(step) {
+      step.classList.toggle('active', i===n);
+      step.classList.toggle('done', i<n);
+    }
   }
-};
+  currentStep = n;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
 
-function showErr(msg) {
-  const el = document.getElementById('form-error');
-  el.textContent   = msg;
+function showAlert(msg, type) {
+  var el = document.getElementById('alert-box');
   el.style.display = 'block';
-  el.scrollIntoView({ behavior:'smooth', block:'center' });
+  el.className = 'alert alert-'+type;
+  el.innerHTML = msg;
+  setTimeout(function(){ el.style.display='none'; }, 4000);
 }
 
-window.nouvelleInscription = function() {
-  document.getElementById('screen-success').style.display = 'none';
-  document.getElementById('screen-form').style.display    = 'block';
-  document.querySelectorAll('input[type=text],input[type=tel],input[type=email],input[type=date],textarea').forEach(el => el.value = '');
-  document.querySelectorAll('select').forEach(el => el.value = '');
-  document.querySelectorAll('.radio-btn').forEach(b => b.classList.remove('selected'));
-  document.getElementById('f-sexe').value   = '';
-  document.getElementById('f-esprit').value = '';
-  document.getElementById('progress-fill').style.width = '0%';
-  window.scrollTo(0, 0);
-};
+function nextStep(from) {
+  // Validation
+  if(from===1) {
+    if(!document.getElementById('e-nom').value.trim()) { showAlert('❌ Le nom est obligatoire','err'); return; }
+    if(!document.getElementById('e-prenom').value.trim()) { showAlert('❌ Le prénom est obligatoire','err'); return; }
+    if(!document.getElementById('e-ddn').value) { showAlert('❌ La date de naissance est obligatoire','err'); return; }
+    if(!document.getElementById('e-sexe').value) { showAlert('❌ Veuillez indiquer le sexe','err'); return; }
+  }
+  if(from===2) {
+    if(!document.getElementById('p-nom').value.trim()) { showAlert('❌ Le nom du parent est obligatoire','err'); return; }
+    if(!document.getElementById('p-tel').value.trim()) { showAlert('❌ Le téléphone du parent est obligatoire','err'); return; }
+  }
+  if(from===3) {
+    if(!document.getElementById('s-classe').value) { showAlert('❌ Veuillez choisir une classe','err'); return; }
+    updateFrais();
+  }
+  showStep(from+1);
+}
 
+function prevStep(from) { showStep(from-1); }
+
+// ── Soumission ──
+function submitInscription() {
+  var btn = document.getElementById('btn-submit');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Envoi...';
+  
+  var code = 'INS-'+new Date().getFullYear()+'-'+String(Date.now()).slice(-5);
+  
+  var data = {
+    entreprise  : entId,
+    code        : code,
+    dateInscr   : new Date().toISOString(),
+    annee       : '2025-2026',
+    statut      : 'en-attente',
+    // Élève
+    nom         : document.getElementById('e-nom').value.trim().toUpperCase(),
+    prenom      : document.getElementById('e-prenom').value.trim(),
+    ddn         : document.getElementById('e-ddn').value,
+    sexe        : document.getElementById('e-sexe').value,
+    lieuNaiss   : document.getElementById('e-lieu').value.trim(),
+    nationalite : document.getElementById('e-nat').value.trim(),
+    // Parent
+    parentNom   : document.getElementById('p-nom').value.trim(),
+    parentLien  : document.getElementById('p-lien').value,
+    parentTel   : document.getElementById('p-tel').value.trim(),
+    parentTel2  : document.getElementById('p-tel2').value.trim(),
+    parentEmail : document.getElementById('p-email').value.trim(),
+    adresse     : document.getElementById('p-adresse').value.trim(),
+    profession  : document.getElementById('p-profession').value.trim(),
+    // Scolarité
+    classe      : document.getElementById('s-classe').value,
+    typeInscr   : document.getElementById('s-type').value,
+    ancienneEcole: document.getElementById('s-ancienne-ecole').value.trim(),
+    notes       : document.getElementById('s-notes').value.trim(),
+    // Frais
+    fraisTotal  : window._fraisTotal || 0,
+    fraisInscr  : window._fraisInsc  || 0,
+    fraisScol   : window._fraisScol  || 0,
+    modePaiement: document.getElementById('f-mode').value,
+  };
+  
+  // Sauvegarder dans Firestore
+  db.collection('entreprises/'+entId+'/inscriptions_publiques').add(data)
+    .then(function() {
+      document.getElementById('confirm-code').textContent = code;
+      showStep(5);
+      // Notifier WhatsApp l'admin (si configuré)
+      try {
+        var msg = '🎓 Nouvelle inscription publique\n'+
+          'Élève: '+data.nom+' '+data.prenom+'\n'+
+          'Classe: '+data.classe+'\n'+
+          'Parent: '+data.parentNom+' — '+data.parentTel+'\n'+
+          'N°: '+code;
+        var wa = 'https://wa.me/22901406021?text='+encodeURIComponent(msg);
+        window.open(wa, '_blank');
+      } catch(e) {}
+    })
+    .catch(function(e) {
+      // Sauvegarder en localStorage en cas d'erreur réseau
+      var local = JSON.parse(localStorage.getItem('inscriptions_offline')||'[]');
+      local.push(data);
+      localStorage.setItem('inscriptions_offline', JSON.stringify(local));
+      document.getElementById('confirm-code').textContent = code;
+      showStep(5);
+    });
+}
 </script>
 </body>
 </html>
