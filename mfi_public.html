@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Mon Compte Épargne — Micro-Finance</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ═══ VARIABLES ═══ */
+:root {
+  --bg:       #0f172a;
+  --surface:  #1e293b;
+  --surface2: #334155;
+  --border:   rgba(148,163,184,.15);
+  --text:     #f1f5f9;
+  --text2:    #94a3b8;
+  --text3:    #64748b;
+  --success:  #10b981;
+  --danger:   #ef4444;
+  --warning:  #f59e0b;
+  --accent:   #3b82f6;
+  --gold:     #d97706;
+  --radius:   12px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* ═══ HEADER ═══ */
+.header{background:linear-gradient(135deg,#1e3a5f 0%,#1e293b 100%);padding:20px 24px;display:flex;align-items:center;gap:14px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.header-logo{font-size:28px}
+.header-title{font-size:18px;font-weight:700;color:#fff}
+.header-sub{font-size:12px;color:var(--text2)}
+.header-ent{margin-left:auto;font-size:12px;color:var(--text2);text-align:right}
+
+/* ═══ LOGIN SCREEN ═══ */
+.login-screen{min-height:calc(100vh - 70px);display:flex;align-items:center;justify-content:center;padding:20px}
+.login-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:36px;width:100%;max-width:420px;text-align:center}
+.login-icon{font-size:52px;margin-bottom:16px}
+.login-title{font-size:22px;font-weight:700;margin-bottom:8px}
+.login-sub{font-size:14px;color:var(--text2);margin-bottom:28px;line-height:1.6}
+.form-group{text-align:left;margin-bottom:16px}
+.form-label{font-size:12px;color:var(--text2);margin-bottom:6px;display:block;font-weight:500;text-transform:uppercase;letter-spacing:.5px}
+.form-input{width:100%;padding:12px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:14px;font-family:'Inter',sans-serif;transition:border-color .2s}
+.form-input:focus{outline:none;border-color:var(--accent)}
+.btn{padding:13px 24px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all .2s;font-family:'Inter',sans-serif}
+.btn-primary{background:linear-gradient(135deg,var(--accent),#1d4ed8);color:#fff;width:100%}
+.btn-primary:hover{opacity:.9;transform:translateY(-1px)}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text2)}
+.btn-success{background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);color:var(--success)}
+.btn-danger{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:var(--danger)}
+.btn-sm{padding:8px 14px;font-size:12px;border-radius:8px}
+
+/* ═══ APP SCREEN ═══ */
+.app{display:none;padding:0 0 80px}
+.section{padding:20px 16px}
+.section-title{font-size:14px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px}
+
+/* ═══ SOLDE CARD ═══ */
+.solde-card{background:linear-gradient(135deg,#1e3a5f,#1e4a2f);border:1px solid rgba(16,185,129,.2);border-radius:16px;padding:24px;margin-bottom:16px}
+.solde-label{font-size:12px;color:rgba(255,255,255,.6);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.solde-amount{font-size:36px;font-weight:700;color:#fff;margin-bottom:4px}
+.solde-sub{font-size:12px;color:rgba(255,255,255,.5)}
+.solde-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}
+
+/* ═══ KPI GRID ═══ */
+.kpi-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px}
+.kpi-val{font-size:20px;font-weight:700;margin-bottom:2px}
+.kpi-lbl{font-size:11px;color:var(--text2)}
+
+/* ═══ TRANSACTIONS ═══ */
+.tx-list{display:flex;flex-direction:column;gap:8px}
+.tx{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;display:flex;align-items:center;gap:12px}
+.tx-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.tx-icon.depot{background:rgba(16,185,129,.12)}
+.tx-icon.retrait{background:rgba(239,68,68,.12)}
+.tx-icon.demande{background:rgba(245,158,11,.12)}
+.tx-info{flex:1}
+.tx-type{font-size:13px;font-weight:600}
+.tx-date{font-size:11px;color:var(--text3);margin-top:2px}
+.tx-note{font-size:11px;color:var(--text2);margin-top:2px}
+.tx-amount{font-size:15px;font-weight:700}
+.tx-amount.depot{color:var(--success)}
+.tx-amount.retrait{color:var(--danger)}
+.tx-amount.demande{color:var(--warning)}
+.tx-status{font-size:10px;padding:2px 8px;border-radius:10px;margin-top:4px;display:inline-block}
+.status-attente{background:rgba(245,158,11,.12);color:var(--warning)}
+.status-valide{background:rgba(16,185,129,.12);color:var(--success)}
+.status-refuse{background:rgba(239,68,68,.12);color:var(--danger)}
+
+/* ═══ TABS ═══ */
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--border);padding:0 16px;background:var(--surface);position:sticky;top:70px;z-index:50;overflow-x:auto}
+.tab{padding:14px 16px;font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s}
+.tab.active{color:var(--accent);border-color:var(--accent)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+/* ═══ MODAL DEMANDE ═══ */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;align-items:flex-end;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border-radius:20px 20px 0 0;padding:28px 20px;width:100%;max-width:480px;max-height:85vh;overflow-y:auto}
+.modal-title{font-size:18px;font-weight:700;margin-bottom:20px}
+.modal-close{float:right;background:none;border:none;font-size:20px;cursor:pointer;color:var(--text2)}
+
+/* ═══ TOAST ═══ */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 20px;font-size:13px;font-weight:500;z-index:500;transition:transform .3s;max-width:320px;text-align:center}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* ═══ BADGE ═══ */
+.badge{font-size:10px;padding:3px 8px;border-radius:8px;font-weight:600}
+.badge-success{background:rgba(16,185,129,.12);color:var(--success)}
+.badge-danger{background:rgba(239,68,68,.12);color:var(--danger)}
+
+/* ═══ EMPTY ═══ */
+.empty{text-align:center;padding:40px 20px;color:var(--text3)}
+.empty-icon{font-size:40px;margin-bottom:12px}
+.empty-text{font-size:13px}
+
+/* ═══ PRET CARD ═══ */
+.pret-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px}
+.pret-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.pret-prog{height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;margin:6px 0}
+.pret-prog-bar{height:100%;background:linear-gradient(90deg,var(--success),#34d399);border-radius:3px;transition:width .5s}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-logo">🏦</div>
+  <div>
+    <div class="header-title">Espace Client</div>
+    <div class="header-sub" id="header-ent-name">Micro-Finance</div>
+  </div>
+  <div class="header-ent" id="header-client-info" style="display:none">
+    <div id="header-client-nom" style="color:#fff;font-weight:600"></div>
+    <div id="header-client-num"></div>
+  </div>
+</div>
+
+<!-- ══ ÉCRAN LOGIN ══ -->
+<div class="login-screen" id="screen-login">
+  <div class="login-card">
+    <div class="login-icon">🔐</div>
+    <div class="login-title">Accédez à votre compte</div>
+    <div class="login-sub">Entrez votre numéro de membre et votre code PIN pour consulter votre compte épargne.</div>
+    <div class="form-group">
+      <label class="form-label">Numéro de membre *</label>
+      <input class="form-input" id="login-num" placeholder="MFI-0001" style="text-transform:uppercase"
+             oninput="this.value=this.value.toUpperCase()">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Code PIN *</label>
+      <input class="form-input" id="login-pin" type="password" placeholder="••••" maxlength="6">
+    </div>
+    <div id="login-error" style="color:var(--danger);font-size:13px;margin-bottom:12px;display:none">
+      ❌ Numéro ou code PIN incorrect. Contactez votre agence.
+    </div>
+    <button class="btn btn-primary" onclick="doLogin()">🔓 Se connecter</button>
+    <div style="margin-top:16px;font-size:12px;color:var(--text3)">Pas encore de code PIN ? Contactez votre agence.</div>
+  </div>
+</div>
+
+<!-- ══ APP ══ -->
+<div class="app" id="screen-app">
+
+  <!-- TABS -->
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('accueil',this)">🏠 Accueil</div>
+    <div class="tab" onclick="showTab('epargne',this)">💰 Épargne</div>
+    <div class="tab" onclick="showTab('prets',this)">📋 Prêts</div>
+    <div class="tab" onclick="showTab('demandes',this)">📤 Demandes</div>
+    <div class="tab" onclick="showTab('profil',this)">👤 Profil</div>
+  </div>
+
+  <!-- TAB ACCUEIL -->
+  <div class="tab-content active" id="tab-accueil">
+    <div class="section">
+      <!-- Solde principal -->
+      <div class="solde-card">
+        <div class="solde-label">Solde épargne disponible</div>
+        <div class="solde-amount" id="acc-solde">0 F</div>
+        <div class="solde-sub" id="acc-membre-num">— —</div>
+        <div class="solde-actions">
+          <button class="btn btn-success btn-sm" onclick="ouvrirDemande('depot')">📥 Déposer</button>
+          <button class="btn btn-danger btn-sm" onclick="ouvrirDemande('retrait')">📤 Retirer</button>
+        </div>
+      </div>
+
+      <!-- KPIs -->
+      <div class="kpi-grid">
+        <div class="kpi">
+          <div class="kpi-val" id="acc-total-depots" style="color:var(--success)">0 F</div>
+          <div class="kpi-lbl">Total dépôts</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-val" id="acc-total-retraits" style="color:var(--danger)">0 F</div>
+          <div class="kpi-lbl">Total retraits</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-val" id="acc-nb-ops">0</div>
+          <div class="kpi-lbl">Opérations</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-val" id="acc-prets-actifs" style="color:var(--warning)">0</div>
+          <div class="kpi-lbl">Prêts actifs</div>
+        </div>
+      </div>
+
+      <!-- Dernières opérations -->
+      <div class="section-title">Dernières opérations</div>
+      <div class="tx-list" id="acc-recent-ops">
+        <div class="empty"><div class="empty-icon">📭</div><div class="empty-text">Aucune opération</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB ÉPARGNE -->
+  <div class="tab-content" id="tab-epargne">
+    <div class="section">
+      <div class="section-title">Historique épargne</div>
+      <div class="tx-list" id="epargne-list">
+        <div class="empty"><div class="empty-icon">📭</div><div class="empty-text">Aucune opération</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB PRÊTS -->
+  <div class="tab-content" id="tab-prets">
+    <div class="section">
+      <div class="section-title">Mes prêts</div>
+      <div id="prets-list">
+        <div class="empty"><div class="empty-icon">📋</div><div class="empty-text">Aucun prêt en cours</div></div>
+      </div>
+      <div style="margin-top:16px">
+        <button class="btn btn-outline" onclick="ouvrirDemande('pret')" style="width:100%">➕ Demander un prêt</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB DEMANDES -->
+  <div class="tab-content" id="tab-demandes">
+    <div class="section">
+      <div class="section-title">Mes demandes à distance</div>
+      <div class="tx-list" id="demandes-list">
+        <div class="empty"><div class="empty-icon">📤</div><div class="empty-text">Aucune demande envoyée</div></div>
+      </div>
+      <div style="margin-top:16px;display:grid;gap:10px">
+        <button class="btn btn-success" onclick="ouvrirDemande('depot')" style="width:100%">📥 Demander un dépôt</button>
+        <button class="btn btn-danger" onclick="ouvrirDemande('retrait')" style="width:100%">📤 Demander un retrait</button>
+        <button class="btn btn-outline" onclick="ouvrirDemande('pret')" style="width:100%">💰 Demander un prêt</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB PROFIL -->
+  <div class="tab-content" id="tab-profil">
+    <div class="section">
+      <div class="section-title">Mon profil</div>
+      <div class="kpi" style="margin-bottom:10px">
+        <div id="profil-nom" style="font-size:18px;font-weight:700;margin-bottom:4px"></div>
+        <div id="profil-num" style="font-size:13px;color:var(--text2)"></div>
+      </div>
+      <div class="kpi" style="margin-bottom:10px">
+        <div class="kpi-lbl" style="margin-bottom:6px">Téléphone</div>
+        <div id="profil-tel" style="font-size:14px;font-weight:600"></div>
+      </div>
+      <div class="kpi" style="margin-bottom:10px">
+        <div class="kpi-lbl" style="margin-bottom:6px">Ville</div>
+        <div id="profil-ville" style="font-size:14px;font-weight:600"></div>
+      </div>
+      <div class="kpi" style="margin-bottom:16px">
+        <div class="kpi-lbl" style="margin-bottom:6px">Date d'adhésion</div>
+        <div id="profil-date" style="font-size:14px;font-weight:600"></div>
+      </div>
+      <button class="btn btn-outline" onclick="doLogout()" style="width:100%">🚪 Se déconnecter</button>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<!-- ══ MODAL DEMANDE ══ -->
+<div class="modal-overlay" id="modal-demande" onclick="fermerModal(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="document.getElementById('modal-demande').classList.remove('open')">✕</button>
+    <div class="modal-title" id="modal-demande-title">Nouvelle demande</div>
+
+    <div id="modal-depot-retrait">
+      <div class="form-group">
+        <label class="form-label">Montant (F CFA) *</label>
+        <input class="form-input" id="dem-montant" type="number" min="500" step="500" placeholder="Ex: 10000">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Mode de paiement</label>
+        <select class="form-input" id="dem-moyen">
+          <option value="MTN MoMo">📱 MTN Mobile Money</option>
+          <option value="Moov Money">💰 Moov Money</option>
+          <option value="Espèces">💵 Espèces (agence)</option>
+        </select>
+      </div>
+      <div id="dem-moyen-detail" style="background:var(--surface2);border-radius:10px;padding:12px;margin-bottom:14px;font-size:12px;color:var(--text2);display:none"></div>
+      <div class="form-group">
+        <label class="form-label">Référence paiement (optionnel)</label>
+        <input class="form-input" id="dem-reference" placeholder="N° de transaction MoMo...">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Note / Message</label>
+        <textarea class="form-input" id="dem-note" rows="2" placeholder="Message pour l'agence..." style="resize:none"></textarea>
+      </div>
+    </div>
+
+    <div id="modal-pret" style="display:none">
+      <div class="form-group">
+        <label class="form-label">Montant souhaité (F CFA) *</label>
+        <input class="form-input" id="pret-montant" type="number" min="5000" step="1000" placeholder="Ex: 50000">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Durée souhaitée (mois)</label>
+        <select class="form-input" id="pret-duree">
+          <option value="3">3 mois</option><option value="6">6 mois</option>
+          <option value="12">12 mois</option><option value="24">24 mois</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Objet du prêt *</label>
+        <input class="form-input" id="pret-objet" placeholder="Commerce, agriculture, santé...">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Garanties proposées</label>
+        <textarea class="form-input" id="pret-garantie" rows="2" placeholder="Épargne, bien immobilier..." style="resize:none"></textarea>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" onclick="envoyerDemande()">📤 Envoyer la demande</button>
+    <div style="margin-top:10px;font-size:11px;color:var(--text3);text-align:center">
+      Votre demande sera traitée par l'agence sous 24h
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- ══ FIREBASE ══ -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, doc, getDoc, getDocs, addDoc, query,
+         where, orderBy, setDoc }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey:            "AIzaSyDCqoYZLBK0ipbotTejMCAvYGxrkomGIGk",
+  authDomain:        "dpgestpro.firebaseapp.com",
+  projectId:         "dpgestpro",
+  storageBucket:     "dpgestpro.firebasestorage.app",
+  messagingSenderId: "795000345158",
+  appId:             "1:795000345158:web:b33a6f77ce9e98bff87047"
+};
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+window._MFIDB = { db, collection, doc, getDoc, getDocs, addDoc, query, where, orderBy, setDoc };
+console.log('✅ Firebase MFI prêt');
+</script>
+
+<!-- ══ APP LOGIC ══ -->
+<script>
+// ═══ ÉTAT ═══
+var _client     = null;
+var _epargne    = [];
+var _prets      = [];
+var _demandes   = [];
+var _entId      = new URLSearchParams(location.search).get('ent') || 'dpgestpro';
+// Avertir si pas d'entreprise spécifiée dans l'URL
+if(!new URLSearchParams(location.search).get('ent')) {
+  console.warn('⚠️ Pas de paramètre ?ent= dans l\'URL. Utiliser: mfi_public.html?ent=NOM_ENTREPRISE');
+}
+var _demType    = 'depot';
+
+// ═══ INIT ═══
+document.addEventListener('DOMContentLoaded', function() {
+  // Charger le nom de l'entreprise depuis l'URL
+  document.getElementById('header-ent-name').textContent = _entId.replace(/_/g,' ').toUpperCase();
+  // Restaurer session
+  var saved = sessionStorage.getItem('mfi_client');
+  if(saved) {
+    _client = JSON.parse(saved);
+    ouvrirApp();
+  }
+  // Event moyen de paiement
+  document.getElementById('dem-moyen').addEventListener('change', updateMoyenDetail);
+});
+
+// ═══ LOGIN ═══
+function doLogin() {
+  var num = (document.getElementById('login-num').value||'').trim().toUpperCase();
+  var pin = (document.getElementById('login-pin').value||'').trim();
+  if(!num || !pin) { toast('⚠️ Numéro et code PIN obligatoires'); return; }
+
+  var errEl = document.getElementById('login-error');
+  errEl.style.display = 'none';
+
+  // Chercher dans Firestore
+  var mfidb = window._MFIDB;
+  if(!mfidb) { toast('⏳ Connexion Firebase en cours...'); setTimeout(function(){ doLogin(); }, 1000); return; }
+
+  var { db, collection, getDocs, query, where } = mfidb;
+  var path = 'entreprises/' + _entId + '/mfi_clients';
+
+  getDocs(query(collection(db, path), where('num','==',num))).then(function(snap) {
+    if(snap.empty) { errEl.style.display='block'; return; }
+    var d = snap.docs[0].data();
+    d.id = snap.docs[0].id;
+    // Vérifier PIN
+    var clientPin = d.pin || d.codePin || '1234'; // PIN par défaut 1234
+    if(clientPin !== pin) { errEl.style.display='block'; return; }
+    _client = d;
+    sessionStorage.setItem('mfi_client', JSON.stringify(_client));
+    chargerDonnees();
+  }).catch(function(e) {
+    // Mode démo si pas de Firebase
+    demoLogin(num, pin);
+  });
+}
+
+function demoLogin(num, pin) {
+  // Données démo si Firebase pas disponible
+  _client = {
+    id: 'demo-1', num: num, nom: 'Client Démo',
+    telephone: '+229 01 00 00 00', ville: 'Cotonou',
+    dateAdhesion: '2025-01-15', soldeEpargne: 125000,
+    statut: 'Actif', pin: pin
+  };
+  _epargne = [
+    {id:'e1', type:'Dépôt', montant:50000, soldeApres:50000, date:'2025-01-20', moyen:'MTN MoMo'},
+    {id:'e2', type:'Dépôt', montant:75000, soldeApres:125000, date:'2025-02-15', moyen:'Espèces'},
+  ];
+  _demandes = [];
+  sessionStorage.setItem('mfi_client', JSON.stringify(_client));
+  ouvrirApp();
+  toast('ℹ️ Mode démonstration');
+}
+
+function chargerDonnees() {
+  var { db, collection, getDocs, query, where, orderBy } = window._MFIDB;
+  var base = 'entreprises/' + _entId + '/';
+
+  // Épargne
+  getDocs(query(collection(db, base+'mfi_epargne'), where('clientId','==',_client.id)))
+    .then(function(s) {
+      _epargne = [];
+      s.forEach(function(d){ _epargne.push(Object.assign({id:d.id},d.data())); });
+      _epargne.sort(function(a,b){ return (b.date||'').localeCompare(a.date||''); });
+      renderAll();
+    }).catch(function(){ renderAll(); });
+
+  // Prêts
+  getDocs(query(collection(db, base+'mfi_prets'), where('clientId','==',_client.id)))
+    .then(function(s) {
+      _prets = [];
+      s.forEach(function(d){ _prets.push(Object.assign({id:d.id},d.data())); });
+      renderAll();
+    }).catch(function(){});
+
+  // Demandes distantes
+  var savedDem = localStorage.getItem('mfi_demandes_'+_client.num);
+  if(savedDem) _demandes = JSON.parse(savedDem);
+
+  ouvrirApp();
+}
+
+function ouvrirApp() {
+  document.getElementById('screen-login').style.display = 'none';
+  document.getElementById('screen-app').style.display   = 'block';
+  document.getElementById('header-client-info').style.display = 'block';
+  document.getElementById('header-client-nom').textContent  = _client.nom;
+  document.getElementById('header-client-num').textContent  = _client.num;
+  renderAll();
+}
+
+function doLogout() {
+  _client = null; _epargne = []; _prets = []; _demandes = [];
+  sessionStorage.removeItem('mfi_client');
+  document.getElementById('screen-app').style.display   = 'none';
+  document.getElementById('screen-login').style.display = 'flex';
+  document.getElementById('header-client-info').style.display = 'none';
+  document.getElementById('login-pin').value = '';
+  document.getElementById('login-num').value = '';
+}
+
+// ═══ RENDER ═══
+function fmtNum(n) { return Number(n||0).toLocaleString('fr-FR'); }
+function fmtDate(d) { if(!d) return '—'; try { return new Date(d).toLocaleDateString('fr-FR'); } catch(e){ return d; } }
+
+function renderAll() {
+  renderAccueil();
+  renderEpargne();
+  renderPrets();
+  renderDemandes();
+  renderProfil();
+}
+
+function renderAccueil() {
+  if(!_client) return;
+  document.getElementById('acc-solde').textContent     = fmtNum(_client.soldeEpargne) + ' F CFA';
+  document.getElementById('acc-membre-num').textContent = _client.num + ' · ' + _client.statut;
+
+  var totalD  = _epargne.filter(function(e){ return e.type==='Dépôt'; }).reduce(function(s,e){ return s+(e.montant||0); }, 0);
+  var totalR  = _epargne.filter(function(e){ return e.type==='Retrait'; }).reduce(function(s,e){ return s+(e.montant||0); }, 0);
+  var pretsA  = _prets.filter(function(p){ return p.statut==='Actif'; }).length;
+
+  document.getElementById('acc-total-depots').textContent   = fmtNum(totalD) + ' F';
+  document.getElementById('acc-total-retraits').textContent = fmtNum(totalR) + ' F';
+  document.getElementById('acc-nb-ops').textContent         = _epargne.length;
+  document.getElementById('acc-prets-actifs').textContent   = pretsA;
+
+  var el = document.getElementById('acc-recent-ops');
+  var recent = _epargne.slice(0, 5);
+  if(!recent.length) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">📭</div><div class="empty-text">Aucune opération</div></div>';
+    return;
+  }
+  el.innerHTML = recent.map(txHTML).join('');
+}
+
+function txHTML(e) {
+  var isD = e.type === 'Dépôt';
+  var isDem = e._demande;
+  var cls = isDem ? 'demande' : (isD ? 'depot' : 'retrait');
+  var icon = isDem ? '📤' : (isD ? '📥' : '📤');
+  var statusBadge = isDem ? ('<span class="tx-status status-'+(e.statut||'attente')+'">'+
+    (e.statut==='valide'?'✅ Validé':e.statut==='refuse'?'❌ Refusé':'⏳ En attente')+'</span>') : '';
+  return '<div class="tx">'
+    + '<div class="tx-icon '+cls+'">'+icon+'</div>'
+    + '<div class="tx-info"><div class="tx-type">'+(e.type||'—')+'</div>'
+    + '<div class="tx-date">'+fmtDate(e.date)+(e.moyen?' · '+e.moyen:'')+'</div>'
+    + (e.note?'<div class="tx-note">'+e.note+'</div>':'')
+    + statusBadge + '</div>'
+    + '<div class="tx-amount '+cls+'">'+
+    (isD?'+':'-')+fmtNum(e.montant)+' F'
+    + '<div style="font-size:10px;color:var(--text3);font-weight:400">Solde: '+fmtNum(e.soldeApres)+' F</div>'
+    + '</div></div>';
+}
+
+function renderEpargne() {
+  var el = document.getElementById('epargne-list');
+  if(!_epargne.length) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">📭</div><div class="empty-text">Aucune opération d\'épargne</div></div>';
+    return;
+  }
+  el.innerHTML = _epargne.map(txHTML).join('');
+}
+
+function renderPrets() {
+  var el = document.getElementById('prets-list');
+  if(!_prets.length) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">📋</div><div class="empty-text">Aucun prêt en cours</div></div>';
+    return;
+  }
+  el.innerHTML = _prets.map(function(p) {
+    var prog = Math.min(100, Math.round(((p.montant-(p.resteAPayer||p.montant))/p.montant)*100));
+    var statColor = p.statut==='Actif'?'var(--success)':p.statut==='Soldé'?'var(--text3)':'var(--warning)';
+    return '<div class="pret-card">'
+      + '<div class="pret-header">'
+      + '<div><div style="font-weight:700">'+fmtNum(p.montant)+' F CFA</div>'
+      + '<div style="font-size:12px;color:var(--text2)">'+(p.objet||'Prêt')+'</div></div>'
+      + '<span class="badge badge-success" style="color:'+statColor+'">'+p.statut+'</span>'
+      + '</div>'
+      + '<div style="font-size:12px;color:var(--text2);margin-bottom:6px">'
+      + '📅 '+fmtDate(p.dateDebut)+' · '+( p.duree||'?')+' mois</div>'
+      + '<div class="pret-prog"><div class="pret-prog-bar" style="width:'+prog+'%"></div></div>'
+      + '<div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text2)">'
+      + '<span>Remboursé: '+fmtNum(p.montant-(p.resteAPayer||p.montant))+' F</span>'
+      + '<span>Reste: '+fmtNum(p.resteAPayer||p.montant)+' F</span></div>'
+      + '</div>';
+  }).join('');
+}
+
+function renderDemandes() {
+  var el = document.getElementById('demandes-list');
+  var all = _demandes.slice().reverse();
+  if(!all.length) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">📤</div><div class="empty-text">Aucune demande envoyée</div></div>';
+    return;
+  }
+  el.innerHTML = all.map(function(d) {
+    var statusCls = 'status-'+(d.statut||'attente');
+    var statusTxt = d.statut==='valide'?'✅ Validé':d.statut==='refuse'?'❌ Refusé':'⏳ En attente';
+    var icon = d.type==='Dépôt'?'📥':d.type==='Retrait'?'📤':'💰';
+    return '<div class="tx">'
+      + '<div class="tx-icon demande">'+icon+'</div>'
+      + '<div class="tx-info"><div class="tx-type">'+d.type+'</div>'
+      + '<div class="tx-date">'+fmtDate(d.date)+(d.moyen?' · '+d.moyen:'')+'</div>'
+      + (d.note?'<div class="tx-note">'+d.note+'</div>':'')
+      + '<span class="tx-status '+statusCls+'">'+statusTxt+'</span></div>'
+      + '<div class="tx-amount demande">'+fmtNum(d.montant)+' F</div>'
+      + '</div>';
+  }).join('');
+}
+
+function renderProfil() {
+  if(!_client) return;
+  document.getElementById('profil-nom').textContent   = _client.nom;
+  document.getElementById('profil-num').textContent   = _client.num + ' · ' + (_client.statut||'Actif');
+  document.getElementById('profil-tel').textContent   = _client.telephone || '—';
+  document.getElementById('profil-ville').textContent = _client.ville || '—';
+  document.getElementById('profil-date').textContent  = fmtDate(_client.dateAdhesion);
+}
+
+// ═══ TABS ═══
+function showTab(id, el) {
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+  document.querySelectorAll('.tab-content').forEach(function(t){ t.classList.remove('active'); });
+  el.classList.add('active');
+  document.getElementById('tab-'+id).classList.add('active');
+}
+
+// ═══ MODAL DEMANDE ═══
+function ouvrirDemande(type) {
+  _demType = type;
+  var isPret = type === 'pret';
+  var title  = type==='depot'?'📥 Demande de dépôt':type==='retrait'?'📤 Demande de retrait':'💰 Demande de prêt';
+  document.getElementById('modal-demande-title').textContent = title;
+  document.getElementById('modal-depot-retrait').style.display = isPret ? 'none' : 'block';
+  document.getElementById('modal-pret').style.display = isPret ? 'block' : 'none';
+  // Réinitialiser champs
+  ['dem-montant','dem-reference','dem-note','pret-montant','pret-objet','pret-garantie'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.value='';
+  });
+  document.getElementById('dem-moyen-detail').style.display='none';
+  document.getElementById('modal-demande').classList.add('open');
+}
+
+function fermerModal(e) {
+  if(e.target === document.getElementById('modal-demande'))
+    document.getElementById('modal-demande').classList.remove('open');
+}
+
+function updateMoyenDetail() {
+  var moyen = document.getElementById('dem-moyen').value;
+  var detail = document.getElementById('dem-moyen-detail');
+  var msgs = {
+    'MTN MoMo':   '📱 Effectuez d\'abord le virement MTN MoMo vers le numéro de l\'agence, puis indiquez la référence ci-dessous.',
+    'Moov Money': '💰 Effectuez d\'abord le virement Moov Money vers le numéro de l\'agence, puis indiquez la référence.',
+    'Espèces':    '🏠 Vous serez contacté pour convenir d\'un rendez-vous à l\'agence.'
+  };
+  detail.textContent = msgs[moyen] || '';
+  detail.style.display = 'block';
+}
+
+function envoyerDemande() {
+  if(!_client) return;
+  var isPret = _demType === 'pret';
+  var demande;
+
+  if(isPret) {
+    var montant = parseFloat(document.getElementById('pret-montant').value);
+    var objet   = (document.getElementById('pret-objet').value||'').trim();
+    if(!montant||montant<5000){ toast('⚠️ Montant minimum 5 000 F'); return; }
+    if(!objet){ toast('⚠️ Précisez l\'objet du prêt'); return; }
+    demande = {
+      id: 'dem-'+Date.now(), type: 'Prêt', clientId: _client.id,
+      clientNom: _client.nom, clientNum: _client.num,
+      montant, duree: parseInt(document.getElementById('pret-duree').value),
+      objet, garantie: document.getElementById('pret-garantie').value,
+      date: new Date().toISOString().split('T')[0], statut: 'attente',
+      createdAt: new Date().toISOString(), source: 'espace-client'
+    };
+  } else {
+    var montant2 = parseFloat(document.getElementById('dem-montant').value);
+    if(!montant2||montant2<500){ toast('⚠️ Montant minimum 500 F'); return; }
+    if(_demType==='retrait' && montant2>(_client.soldeEpargne||0)){
+      toast('❌ Solde insuffisant: '+fmtNum(_client.soldeEpargne||0)+' F'); return;
+    }
+    demande = {
+      id: 'dem-'+Date.now(), type: _demType==='depot'?'Dépôt':'Retrait',
+      clientId: _client.id, clientNom: _client.nom, clientNum: _client.num,
+      montant: montant2, moyen: document.getElementById('dem-moyen').value,
+      reference: document.getElementById('dem-reference').value,
+      note: document.getElementById('dem-note').value,
+      date: new Date().toISOString().split('T')[0], statut: 'attente',
+      createdAt: new Date().toISOString(), source: 'espace-client'
+    };
+  }
+
+  // Sauvegarder localement
+  _demandes.push(demande);
+  try { localStorage.setItem('mfi_demandes_'+_client.num, JSON.stringify(_demandes)); } catch(e){}
+
+  // Sauvegarder dans Firestore avec retry
+  sauvegarderDemandeFirestore(demande, 0);
+
+  // Notification WhatsApp agence
+  var waMsg = encodeURIComponent(
+    '📬 Nouvelle demande client — Espace MFI\n'
+    + 'Client: ' + _client.nom + ' (' + _client.num + ')\n'
+    + 'Type: ' + demande.type + '\n'
+    + 'Montant: ' + fmtNum(demande.montant) + ' F CFA\n'
+    + (demande.moyen?'Moyen: '+demande.moyen+'\n':'')
+    + (demande.reference?'Réf: '+demande.reference+'\n':'')
+    + (demande.note?'Note: '+demande.note+'\n':'')
+    + 'Date: ' + demande.date
+  );
+  window.open('https://wa.me/?text='+waMsg, '_blank');
+
+  document.getElementById('modal-demande').classList.remove('open');
+  renderDemandes();
+  showTab('demandes', document.querySelectorAll('.tab')[3]);
+  toast('✅ Demande envoyée ! L\'agence la traitera sous 24h.');
+}
+
+// ═══ TOAST ═══
+function toast(msg) {
+  var el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(function(){ el.classList.remove('show'); }, 3500);
+}
+
+// ═══ FIRESTORE AVEC RETRY ═══
+function sauvegarderDemandeFirestore(demande, attempt) {
+  if(attempt > 10) {
+    // Après 10 tentatives (5 secondes), afficher avertissement
+    var el = document.getElementById('dem-sync-warning');
+    if(!el) {
+      el = document.createElement('div');
+      el.id = 'dem-sync-warning';
+      el.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);'
+        + 'background:#7c3aed;color:#fff;padding:12px 20px;border-radius:12px;font-size:13px;'
+        + 'z-index:400;text-align:center;max-width:320px;box-shadow:0 4px 20px rgba(0,0,0,.3)';
+      el.innerHTML = '⚠️ Synchronisation en cours...<br><small>Votre demande est enregistrée localement.</small>'
+        + '<br><button onclick="reessayerSync()" style="margin-top:8px;padding:4px 12px;background:#fff;'
+        + 'color:#7c3aed;border:none;border-radius:6px;cursor:pointer;font-weight:600">🔄 Réessayer</button>';
+      document.body.appendChild(el);
+    }
+    // Sauvegarder la demande en attente
+    _demandesEnAttente.push(demande);
+    return;
+  }
+  if(!window._MFIDB) {
+    // Firebase pas encore prêt → réessayer dans 500ms
+    setTimeout(function(){ sauvegarderDemandeFirestore(demande, attempt+1); }, 500);
+    return;
+  }
+  var { db, collection, addDoc } = window._MFIDB;
+  var path = 'entreprises/'+_entId+'/mfi_demandes_distance';
+  addDoc(collection(db, path), demande).then(function() {
+    console.log('✅ Demande Firestore OK:', demande.id);
+    // Supprimer l'avertissement si présent
+    var warn = document.getElementById('dem-sync-warning');
+    if(warn) warn.remove();
+  }).catch(function(e) {
+    console.warn('Firestore erreur tentative', attempt, ':', e.message);
+    setTimeout(function(){ sauvegarderDemandeFirestore(demande, attempt+1); }, 1000);
+  });
+}
+
+var _demandesEnAttente = [];
+
+function reessayerSync() {
+  var pending = _demandesEnAttente.slice();
+  _demandesEnAttente = [];
+  pending.forEach(function(d){ sauvegarderDemandeFirestore(d, 0); });
+  var warn = document.getElementById('dem-sync-warning');
+  if(warn) warn.remove();
+  toast('🔄 Synchronisation en cours...');
+}
+
+</script>
+</body>
+</html>
