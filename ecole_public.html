@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Espace Parents — Institut Académique</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07080f;--surf:#0f1118;--surf2:#161922;--surf3:#1c2030;
+  --acc:#6c63ff;--green:#10b981;--red:#ef4444;--yellow:#f59e0b;--blue:#3b82f6;
+  --bdr:rgba(108,99,255,.18);--txt:#eeeef8;--txt2:#9090b8;--txt3:#555578;
+  --radius:14px;--shadow:0 8px 32px rgba(0,0,0,.45);
+}
+html,body{min-height:100vh;font-family:'DM Sans',system-ui,sans-serif;
+  background:var(--bg);color:var(--txt)}
+
+/* ── Header ── */
+.header{background:linear-gradient(135deg,var(--surf) 0%,rgba(108,99,255,.12) 100%);
+  border-bottom:1px solid var(--bdr);padding:0 20px;height:64px;
+  display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:100;
+  box-shadow:0 2px 20px rgba(0,0,0,.3)}
+.logo{font-size:20px;font-weight:900;color:var(--acc)}
+.logo em{color:var(--txt2);font-style:normal;font-weight:400;font-size:13px}
+.header-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.btn-logout{padding:6px 14px;border-radius:8px;border:1px solid var(--bdr);
+  background:transparent;color:var(--txt2);font-size:12px;font-weight:600;cursor:pointer}
+.btn-logout:hover{border-color:var(--acc);color:var(--acc)}
+
+/* ── Écran connexion ── */
+.login-screen{min-height:100vh;display:flex;align-items:center;
+  justify-content:center;padding:20px;background:var(--bg)}
+.login-card{background:var(--surf);border:1px solid var(--bdr);
+  border-radius:20px;padding:40px 32px;width:100%;max-width:420px}
+.login-icon{font-size:48px;text-align:center;margin-bottom:12px}
+.login-title{font-size:22px;font-weight:900;text-align:center;margin-bottom:4px}
+.login-sub{font-size:13px;color:var(--txt2);text-align:center;margin-bottom:28px}
+.form-group{margin-bottom:14px}
+.form-label{display:block;font-size:11px;font-weight:700;color:var(--txt3);
+  text-transform:uppercase;letter-spacing:.4px;margin-bottom:5px}
+.form-inp{width:100%;padding:11px 14px;background:var(--surf2);
+  border:1px solid var(--bdr);border-radius:10px;color:var(--txt);
+  font-size:14px;font-family:inherit}
+.form-inp:focus{outline:none;border-color:var(--acc)}
+.btn-primary{width:100%;padding:13px;background:linear-gradient(135deg,var(--acc),#8b7fff);
+  color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;
+  cursor:pointer;margin-top:6px;box-shadow:0 4px 15px rgba(108,99,255,.35)}
+.btn-primary:hover{opacity:.9}
+.err-msg{color:var(--red);font-size:12px;text-align:center;margin-top:10px;display:none}
+
+/* ── App principal ── */
+.app{display:none}
+.container{max-width:900px;margin:0 auto;padding:24px 16px}
+
+/* ── Fiche élève ── */
+.eleve-card{background:var(--surf);border:1px solid var(--bdr);
+  border-radius:var(--radius);padding:20px;margin-bottom:20px;
+  display:flex;align-items:center;gap:16px}
+.eleve-avatar{width:60px;height:60px;border-radius:50%;
+  background:linear-gradient(135deg,var(--acc),#8b7fff);
+  display:flex;align-items:center;justify-content:center;
+  font-size:24px;font-weight:900;color:#fff;flex-shrink:0}
+.eleve-nom{font-size:20px;font-weight:900}
+.eleve-meta{font-size:13px;color:var(--txt2);margin-top:3px}
+.badge-classe{display:inline-block;background:rgba(108,99,255,.15);
+  color:var(--acc);padding:3px 10px;border-radius:20px;font-size:12px;
+  font-weight:700;margin-top:4px}
+
+/* ── Onglets ── */
+.tabs{display:flex;gap:4px;background:var(--surf);border:1px solid var(--bdr);
+  border-radius:12px;padding:4px;margin-bottom:20px;overflow-x:auto}
+.tab{flex:1;padding:9px 14px;border-radius:9px;border:none;background:transparent;
+  color:var(--txt2);font-size:13px;font-weight:600;cursor:pointer;
+  transition:all .2s;white-space:nowrap;min-width:90px;text-align:center}
+.tab.active{background:var(--acc);color:#fff}
+
+/* ── Section ── */
+.section{display:none}
+.section.active{display:block}
+.section-title{font-size:15px;font-weight:800;margin-bottom:14px;
+  display:flex;align-items:center;gap:8px}
+
+/* ── Stat cards ── */
+.stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
+  gap:12px;margin-bottom:20px}
+.stat-card{background:var(--surf);border:1px solid var(--bdr);
+  border-radius:var(--radius);padding:16px;text-align:center}
+.stat-val{font-size:24px;font-weight:900;margin-bottom:3px}
+.stat-lbl{font-size:11px;color:var(--txt3);text-transform:uppercase;letter-spacing:.4px}
+
+/* ── Notes table ── */
+.table-wrap{background:var(--surf);border:1px solid var(--bdr);
+  border-radius:var(--radius);overflow:hidden;margin-bottom:20px}
+table{width:100%;border-collapse:collapse}
+th{padding:10px 14px;font-size:11px;font-weight:700;color:var(--txt3);
+  text-transform:uppercase;letter-spacing:.4px;text-align:left;
+  background:var(--surf2);border-bottom:1px solid var(--bdr)}
+td{padding:11px 14px;font-size:13px;border-bottom:1px solid rgba(255,255,255,.04)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.02)}
+
+/* ── Note badge ── */
+.note-badge{display:inline-block;padding:3px 10px;border-radius:20px;
+  font-size:13px;font-weight:800}
+.note-tb{background:rgba(16,185,129,.15);color:#10b981}
+.note-b{background:rgba(59,130,246,.15);color:#3b82f6}
+.note-ab{background:rgba(245,158,11,.15);color:#f59e0b}
+.note-p{background:rgba(239,68,68,.15);color:#ef4444}
+
+/* ── Bulletin ── */
+.bulletin{background:#fff;border-radius:var(--radius);padding:28px;
+  color:#1a1a2e;margin-bottom:20px}
+.bull-header{text-align:center;border-bottom:2px solid #6c63ff;
+  padding-bottom:16px;margin-bottom:20px}
+.bull-school{font-size:18px;font-weight:900;color:#6c63ff}
+.bull-title{font-size:15px;font-weight:700;margin:6px 0}
+.bull-sub{font-size:12px;color:#666}
+.bull-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;
+  margin-bottom:16px;font-size:13px}
+.bull-field{display:flex;gap:6px}
+.bull-field-lbl{color:#666;min-width:80px}
+.bull-field-val{font-weight:600}
+.bull-table{width:100%;border-collapse:collapse;margin-bottom:16px;font-size:12px}
+.bull-table th{background:#6c63ff;color:#fff;padding:7px 10px;text-align:left}
+.bull-table td{padding:7px 10px;border-bottom:1px solid #e5e7eb}
+.bull-table tr:nth-child(even) td{background:#f9fafb}
+.bull-footer{display:flex;justify-content:space-between;margin-top:20px;font-size:12px}
+.bull-sign{text-align:center;width:180px}
+.bull-sign-line{border-top:1px solid #1a1a2e;margin-top:40px;padding-top:6px}
+.btn-print{padding:10px 20px;background:#6c63ff;color:#fff;border:none;
+  border-radius:8px;cursor:pointer;font-weight:700;font-size:13px}
+
+/* ── Présences ── */
+.presence-bar{height:10px;background:rgba(255,255,255,.08);border-radius:5px;
+  overflow:hidden;margin-top:6px}
+.presence-fill{height:100%;border-radius:5px;transition:width .5s}
+
+/* ── Message vide ── */
+.empty{text-align:center;padding:40px;color:var(--txt3);font-size:13px}
+.empty-icon{font-size:36px;margin-bottom:10px}
+
+/* ── Loading ── */
+.loading{text-align:center;padding:60px;color:var(--txt3)}
+.spinner{width:36px;height:36px;border:3px solid var(--bdr);
+  border-top-color:var(--acc);border-radius:50%;
+  animation:spin 1s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── Toast ── */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(60px);
+  background:var(--surf);border:1px solid var(--bdr);padding:10px 20px;
+  border-radius:10px;font-size:13px;font-weight:600;z-index:9999;
+  transition:transform .3s;box-shadow:var(--shadow)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+@media(max-width:600px){
+  .eleve-card{flex-direction:column;text-align:center}
+  .stat-row{grid-template-columns:1fr 1fr}
+  .bull-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ ÉCRAN CONNEXION ══ -->
+<div class="login-screen" id="login-screen">
+  <div class="login-card">
+    <div class="login-icon">🎓</div>
+    <div class="login-title">Espace Parents</div>
+    <div class="login-sub">Consultez les résultats et bulletins de votre enfant</div>
+
+    <div class="form-group">
+      <label class="form-label">Matricule de l'élève *</label>
+      <input class="form-inp" id="inp-matricule" placeholder="Ex: ELV-0001"
+        onkeydown="if(event.key==='Enter') connexion()">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Code d'accès parent *</label>
+      <input class="form-inp" id="inp-code" type="password" placeholder="Code fourni par l'école"
+        onkeydown="if(event.key==='Enter') connexion()">
+    </div>
+    <button class="btn-primary" onclick="connexion()">🔓 Accéder au dossier</button>
+    <div class="err-msg" id="err-msg">Matricule ou code incorrect. Contactez l'école.</div>
+
+    <div style="margin-top:20px;padding:12px;background:var(--surf2);border-radius:10px;
+      font-size:11px;color:var(--txt3);text-align:center;line-height:1.6">
+      🔒 Accès sécurisé — Les données sont confidentielles<br>
+      En cas de problème: contactez l'administration
+    </div>
+  </div>
+</div>
+
+<!-- ══ APPLICATION ══ -->
+<div class="app" id="app">
+  <div class="header">
+    <span style="font-size:22px">🎓</span>
+    <div class="logo">Institut Académique <em>| Espace Parents</em></div>
+    <div class="header-right">
+      <span id="header-eleve-nom" style="font-size:13px;font-weight:700;color:var(--txt2)"></span>
+      <button class="btn-logout" onclick="deconnexion()">Déconnexion</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Fiche élève -->
+    <div class="eleve-card" id="eleve-card">
+      <div class="eleve-avatar" id="av-initiale">?</div>
+      <div>
+        <div class="eleve-nom" id="eleve-nom-display">---</div>
+        <div class="eleve-meta" id="eleve-meta-display">---</div>
+        <div><span class="badge-classe" id="eleve-classe-display">---</span></div>
+      </div>
+    </div>
+
+    <!-- Stat résumé -->
+    <div class="stat-row" id="stat-row"></div>
+
+    <!-- Onglets -->
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('notes',this)">📊 Notes</button>
+      <button class="tab" onclick="switchTab('bulletin',this)">📋 Bulletin</button>
+      <button class="tab" onclick="switchTab('presences',this)">📅 Présences</button>
+      <button class="tab" onclick="switchTab('paiements',this)">💰 Scolarité</button>
+      <button class="tab" onclick="switchTab('resultats',this)">🏆 Résultats</button>
+    </div>
+
+    <!-- SECTION NOTES -->
+    <div class="section active" id="sec-notes">
+      <div class="section-title">📊 Notes & Évaluations</div>
+      <div id="notes-content">
+        <div class="loading"><div class="spinner"></div>Chargement...</div>
+      </div>
+    </div>
+
+    <!-- SECTION BULLETIN -->
+    <div class="section" id="sec-bulletin">
+      <div class="section-title">📋 Bulletin Scolaire</div>
+      <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+        <select id="bull-trimestre" onchange="renderBulletin()"
+          style="padding:8px 12px;background:var(--surf2);border:1px solid var(--bdr);
+            border-radius:8px;color:var(--txt);font-size:13px">
+          <option value="1">1er Trimestre</option>
+          <option value="2">2ème Trimestre</option>
+          <option value="3">3ème Trimestre</option>
+          <option value="annuel">Annuel</option>
+        </select>
+        <button class="btn-print" onclick="imprimerBulletin()">🖨 Imprimer</button>
+      </div>
+      <div id="bulletin-content"></div>
+    </div>
+
+    <!-- SECTION PRÉSENCES -->
+    <div class="section" id="sec-presences">
+      <div class="section-title">📅 Absences & Présences</div>
+      <div id="presences-content"></div>
+    </div>
+
+    <!-- SECTION PAIEMENTS -->
+    <div class="section" id="sec-paiements">
+      <div class="section-title">💰 Frais de Scolarité</div>
+      <div id="paiements-content"></div>
+    </div>
+
+    <!-- SECTION RÉSULTATS EXAMENS -->
+    <div class="section" id="sec-resultats">
+      <div class="section-title">🏆 Résultats d'Examens</div>
+      <div id="resultats-content"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs, query, where }
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const app = initializeApp({
+  apiKey           : "AIzaSyDCqoYZLBK0ipbotTejMCAvYGxrkomGIGk",
+  authDomain       : "dpgestpro.firebaseapp.com",
+  projectId        : "dpgestpro",
+  storageBucket    : "dpgestpro.appspot.com",
+  messagingSenderId: "123456789",
+  appId            : "1:123456789:web:dpgestpro"
+});
+const db = getFirestore(app);
+
+window._FB  = { db, collection, getDocs, query, where };
+
+// Charger données depuis Firestore
+window.chargerDonneesEleve = async function(entId, eleveId) {
+  try {
+    const load = async (col) => {
+      const snap = await getDocs(collection(db, 'entreprises/'+entId+'/'+col));
+      return snap.docs.map(d => ({...d.data(), _id: d.id, id: d.id}));
+    };
+    // Charger toutes les données de l'école
+    const [notes, presences, paiements, examens, cours] = await Promise.all([
+      load('ecoleNotes'),
+      load('ecolePresences'),
+      load('ecolePaiements'),
+      load('ecoleExamens'),
+      load('ecoleCours'),
+    ]);
+    window._DATA = {
+      notes     : notes,
+      presences : presences,
+      paiements : paiements,
+      examens   : examens,
+      cours     : cours,
+    };
+    return true;
+  } catch(e) {
+    console.warn('Firebase chargerDonneesEleve:', e.message || e);
+    return false;
+  }
+};
+</script>
+
+<script>
+// ══════════════════════════════════════════════════
+// ESPACE PARENTS — Institut Académique
+// ══════════════════════════════════════════════════
+
+var _eleve   = null;
+var _entId   = null;
+var _data    = { notes:[], presences:[], paiements:[], examens:[] };
+var _curTab  = 'notes';
+
+// ── Connexion ─────────────────────────────────────
+function connexion() {
+  var mat  = (document.getElementById('inp-matricule').value||'').trim().toUpperCase();
+  var code = (document.getElementById('inp-code').value||'').trim();
+  if(!mat || !code) { showErr('Remplissez tous les champs'); return; }
+
+  var btn = document.querySelector('.btn-primary');
+  btn.textContent = '⏳ Vérification...'; btn.disabled = true;
+
+  // Chercher dans Firebase
+  var FB = window._FB;
+  if(!FB) { chargerDepuisCache(mat, code); return; }
+
+  // Chercher dans toutes les entreprises type école
+  // Charger dynamiquement toutes les entreprises de type école
+  FB.getDocs(FB.collection(FB.db, 'entreprises')).then(function(snap) {
+    var ecoleIds = [];
+    snap.forEach(function(d) {
+      var ent = d.data();
+      // Inclure toutes les entreprises (si type école ou pas de type)
+      if(!ent.type || ent.type === 'ecole' || ent.type === 'academique' || ent.type === 'school') {
+        ecoleIds.push(d.id);
+      }
+    });
+    if(!ecoleIds.length) ecoleIds = ['ecole_demo']; // fallback
+    rechercherEleve(mat, code, ecoleIds, 0);
+  }).catch(function() {
+    // Si Firebase échoue, essayer avec l'entId par défaut
+    rechercherEleve(mat, code, ['ecole_demo'], 0);
+  });
+}
+
+function rechercherEleve(mat, code, ids, idx) {
+  if(idx >= ids.length) {
+    // Essayer le localStorage
+    chargerDepuisCache(mat, code);
+    return;
+  }
+  var entId = ids[idx];
+  var FB = window._FB;
+  FB.getDocs(FB.collection(FB.db, 'entreprises/'+entId+'/ecoleEleves'))
+    .then(function(snap) {
+      var eleve = null;
+      snap.forEach(function(d) {
+        var e = Object.assign({_id:d.id, id:d.id}, d.data());
+        // Chercher par matricule OU par code d'accès
+        if((e.matricule||'').toUpperCase() === mat
+        || (e.codeAcces||'').toUpperCase() === mat
+        || (e.code||'').toUpperCase() === mat) {
+          eleve = e;
+        }
+      });
+      if(eleve && verifierCode(eleve, code)) {
+        _eleve = eleve; _entId = entId;
+        ouvrirApp();
+      } else {
+        rechercherEleve(mat, code, ids, idx+1);
+      }
+    })
+    .catch(function() {
+      rechercherEleve(mat, code, ids, idx+1);
+    });
+}
+
+function chargerDepuisCache(mat, code) {
+  // Démo / fallback local
+  var demo = getDemoEleve(mat, code);
+  if(demo) { _eleve = demo.eleve; _entId = demo.entId; ouvrirApp(); return; }
+  showErr('Matricule ou code incorrect. Contactez l\'école.');
+  var btn = document.querySelector('.btn-primary');
+  btn.textContent = '🔓 Accéder au dossier'; btn.disabled = false;
+}
+
+function getDemoEleve(mat, code) {
+  // Élèves démo pour test
+  var demos = [
+    { matricule:'ELV-0001', nom:'AGOSSOU', prenom:'Sénan', classe:'6ème', sexe:'Masculin',
+      codeParent:'1234', telParent:'0197654321', frais:45000, fraisPaye:30000,
+      dateNaissance:'2012-03-15' },
+    { matricule:'ELV-0002', nom:'GODO', prenom:'Mariam', classe:'5ème', sexe:'Féminin',
+      codeParent:'5678', telParent:'0197654322', frais:45000, fraisPaye:45000,
+      dateNaissance:'2011-07-22' },
+  ];
+  var e = demos.find(function(d){ return d.matricule===mat && d.codeParent===code; });
+  if(!e) return null;
+  e.id = e.matricule;
+  return { eleve:e, entId:'ecole_demo' };
+}
+
+function verifierCode(eleve, code) {
+  return (eleve.codeParent||eleve.pin||'') === code;
+}
+
+function showErr(msg) {
+  var el = document.getElementById('err-msg');
+  el.textContent = msg; el.style.display = 'block';
+  var btn = document.querySelector('.btn-primary');
+  btn.textContent = '🔓 Accéder au dossier'; btn.disabled = false;
+}
+
+// ── Ouvrir l'app ──────────────────────────────────
+function ouvrirApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display          = 'block';
+
+  var initiale = (_eleve.nom||'?').charAt(0);
+  document.getElementById('av-initiale').textContent       = initiale;
+  document.getElementById('eleve-nom-display').textContent = (_eleve.nom||'') + ' ' + (_eleve.prenom||'');
+  document.getElementById('header-eleve-nom').textContent  = (_eleve.nom||'') + ' ' + (_eleve.prenom||'');
+  document.getElementById('eleve-meta-display').textContent =
+    (_eleve.sexe||'') + (calcAge(_eleve.dateNaissance) ? ' · '+calcAge(_eleve.dateNaissance)+' ans' : '') +
+    (_eleve.telParent ? ' · Parent: '+_eleve.telParent : '');
+  document.getElementById('eleve-classe-display').textContent = 'Classe: ' + (_eleve.classe||'---');
+
+  // Sauvegarder l'élève dans localStorage pour reconnexion rapide
+  try {
+    var toSave = Object.assign({}, _eleve, {_entId: _entId});
+    localStorage.setItem('espace_eleve_'+ (_eleve.matricule||''), JSON.stringify(toSave));
+  } catch(e){}
+
+  // Charger données Firebase en arrière-plan
+  if(window.chargerDonneesEleve) {
+    window.chargerDonneesEleve(_entId, _eleve.id).then(function(ok) {
+      if(ok && window._DATA) _data = window._DATA;
+      renderAll();
+    });
+  } else {
+    chargerDonneesDémo();
+    renderAll();
+  }
+}
+
+function chargerDonneesDémo() {
+  // Notes démo
+  var matieres = ['Mathématiques','Français','Anglais','Sciences','Histoire-Géo','EPS'];
+  _data.notes = matieres.map(function(m, i) {
+    return { eleveId:_eleve.id, matiere:m, trimestre:'1', note:Math.round(8+Math.random()*12*10)/10,
+      coefficient:2, observation:'Bien', date:'2026-03-'+String(10+i).padStart(2,'0') };
+  });
+  _data.presences = [
+    {eleveId:_eleve.id, date:'2026-03-10', statut:'Présent'},
+    {eleveId:_eleve.id, date:'2026-03-11', statut:'Présent'},
+    {eleveId:_eleve.id, date:'2026-03-12', statut:'Absent', motif:'Maladie'},
+    {eleveId:_eleve.id, date:'2026-03-13', statut:'Présent'},
+    {eleveId:_eleve.id, date:'2026-03-14', statut:'Présent'},
+  ];
+  _data.paiements = [
+    {eleveId:_eleve.id, date:'2026-01-05', montant:15000, mode:'Espèces', trimestre:'1', statut:'Payé'},
+    {eleveId:_eleve.id, date:'2026-02-03', montant:15000, mode:'MoMo',    trimestre:'2', statut:'Payé'},
+  ];
+}
+
+function deconnexion() {
+  _eleve=null; _entId=null;
+  _data={notes:[],presences:[],paiements:[],examens:[]};
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('app').style.display='none';
+  document.getElementById('inp-matricule').value='';
+  document.getElementById('inp-code').value='';
+  document.getElementById('err-msg').style.display='none';
+}
+
+// ── Onglets ───────────────────────────────────────
+function switchTab(tab, btn) {
+  _curTab = tab;
+  document.querySelectorAll('.tab').forEach(function(b){ b.classList.remove('active'); });
+  if(btn) btn.classList.add('active');
+  document.querySelectorAll('.section').forEach(function(s){ s.classList.remove('active'); });
+  var sec = document.getElementById('sec-'+tab);
+  if(sec) sec.classList.add('active');
+  renderSection(tab);
+}
+
+function renderAll() { renderSection(_curTab); renderStats(); }
+
+function renderSection(tab) {
+  if(tab==='notes')     renderNotes();
+  if(tab==='bulletin')  renderBulletin();
+  if(tab==='presences') renderPresences();
+  if(tab==='paiements') renderPaiements();
+  if(tab==='resultats') renderResultats();
+}
+
+// ── Stats ─────────────────────────────────────────
+function renderStats() {
+  var notes  = mesNotes();
+  var moy    = notes.length ? (notes.reduce(function(s,n){return s+n.note;},0)/notes.length).toFixed(2) : '--';
+  var moyCol = moy >= 10 ? 'var(--green)' : moy >= 8 ? 'var(--yellow)' : 'var(--red)';
+  var abs    = mesPresences().filter(function(p){return p.statut==='Absent';}).length;
+  var paye   = mesPaiements().reduce(function(s,p){return s+Number(p.montant||0);},0);
+  var reste  = Math.max(0, Number(_eleve.frais||0) - paye);
+
+  document.getElementById('stat-row').innerHTML =
+    statCard(moy,'Moyenne générale',moyCol) +
+    statCard(notes.length,'Notes enregistrées','var(--acc)') +
+    statCard(abs,'Absence(s)','var(--yellow)') +
+    statCard(fmtNum(reste)+' F','Solde restant',reste===0?'var(--green)':'var(--red)');
+}
+
+function statCard(val,lbl,col) {
+  return '<div class="stat-card"><div class="stat-val" style="color:'+col+'">'+val+'</div>'
+    +'<div class="stat-lbl">'+lbl+'</div></div>';
+}
+
+// ── Filtrer par élève ─────────────────────────────
+function mesNotes() {
+  return (_data.notes||[]).filter(function(n){
+    return String(n.eleveId) === String(_eleve._id)
+        || String(n.eleveId) === String(_eleve.id)
+        || String(n.eleveId) === (_eleve.matricule||'')
+        || n.classe === _eleve.classe; // Si les notes sont par classe
+  });
+}
+function mesPresences() { return (_data.presences||[]).filter(function(p){return String(p.eleveId)===String(_eleve.id)||String(p.eleveId)===_eleve.matricule;}); }
+function mesPaiements() { return (_data.paiements||[]).filter(function(p){return String(p.eleveId)===String(_eleve.id)||String(p.eleveId)===_eleve.matricule;}); }
+function mesExamens()   { return (_data.examens||[]).filter(function(e){return e.classe===_eleve.classe;}); }
+
+// ── NOTES ─────────────────────────────────────────
+function renderNotes() {
+  var notes = mesNotes();
+  var el = document.getElementById('notes-content');
+  if(!notes.length) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">📊</div>Aucune note enregistrée</div>';
+    return;
+  }
+  // Grouper par trimestre
+  var byTrim = {};
+  notes.forEach(function(n) {
+    var t = n.trimestre||'1';
+    if(!byTrim[t]) byTrim[t]=[];
+    byTrim[t].push(n);
+  });
+  el.innerHTML = Object.entries(byTrim).map(function(entry) {
+    var trim=entry[0], ns=entry[1];
+    var moy = (ns.reduce(function(s,n){return s+Number(n.note||0);},0)/ns.length).toFixed(2);
+    var moyCol = moy>=10?'var(--green)':moy>=8?'var(--yellow)':'var(--red)';
+    return '<div class="table-wrap" style="margin-bottom:20px">'
+      +'<div style="padding:12px 16px;background:var(--surf2);display:flex;justify-content:space-between;align-items:center">'
+        +'<span style="font-weight:700">📚 '+(trim==='annuel'?'Annuel':trim+'er/ème Trimestre')+'</span>'
+        +'<span style="font-weight:900;color:'+moyCol+'">Moyenne: '+moy+'/20</span>'
+      +'</div>'
+      +'<table><thead><tr>'
+        +'<th>Matière</th><th>Note</th><th>Coeff.</th><th>Mention</th><th>Date</th>'
+      +'</tr></thead><tbody>'
+      +ns.map(function(n){
+        var note=Number(n.note||0);
+        var cls=note>=16?'note-tb':note>=14?'note-b':note>=10?'note-ab':'note-p';
+        var men=note>=16?'Très Bien':note>=14?'Bien':note>=10?'Assez Bien':'Insuffisant';
+        return '<tr><td><strong>'+n.matiere+'</strong></td>'
+          +'<td><span class="note-badge '+cls+'">'+note+'/20</span></td>'
+          +'<td>'+( n.coefficient||1)+'</td>'
+          +'<td style="font-size:12px;color:var(--txt2)">'+men+'</td>'
+          +'<td style="font-size:12px;color:var(--txt3)">'+(n.date||'---')+'</td></tr>';
+      }).join('')
+      +'</tbody></table></div>';
+  }).join('');
+}
+
+// ── BULLETIN ──────────────────────────────────────
+function renderBulletin() {
+  var trimestre = document.getElementById('bull-trimestre').value;
+  var notes     = mesNotes().filter(function(n){ return n.trimestre==trimestre||trimestre==='annuel'; });
+  var el        = document.getElementById('bulletin-content');
+
+  if(!notes.length) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">📋</div>Aucune note pour ce trimestre</div>';
+    return;
+  }
+
+  var totalPts=0, totalCoef=0;
+  notes.forEach(function(n){ totalPts+=Number(n.note||0)*Number(n.coefficient||1); totalCoef+=Number(n.coefficient||1); });
+  var moy = totalCoef>0?(totalPts/totalCoef).toFixed(2):0;
+  var mention = moy>=16?'Très Bien':moy>=14?'Bien':moy>=12?'Assez Bien':moy>=10?'Passable':'Insuffisant';
+  var today = new Date().toLocaleDateString('fr-FR',{year:'numeric',month:'long',day:'numeric'});
+
+  el.innerHTML = '<div class="bulletin" id="bulletin-print">'
+    +'<div class="bull-header">'
+      +'<div class="bull-school">Institut Académique</div>'
+      +'<div class="bull-title">BULLETIN DE NOTES — '+
+        (trimestre==='annuel'?'ANNUEL':(trimestre+'er Trimestre'))+'</div>'
+      +'<div class="bull-sub">Année scolaire 2025-2026</div>'
+    +'</div>'
+    +'<div class="bull-grid">'
+      +'<div class="bull-field"><span class="bull-field-lbl">Élève:</span><span class="bull-field-val">'+(_eleve.nom+' '+_eleve.prenom)+'</span></div>'
+      +'<div class="bull-field"><span class="bull-field-lbl">Matricule:</span><span class="bull-field-val">'+(_eleve.matricule||_eleve.id)+'</span></div>'
+      +'<div class="bull-field"><span class="bull-field-lbl">Classe:</span><span class="bull-field-val">'+(_eleve.classe||'---')+'</span></div>'
+      +'<div class="bull-field"><span class="bull-field-lbl">Sexe:</span><span class="bull-field-val">'+(_eleve.sexe||'---')+'</span></div>'
+    +'</div>'
+    +'<table class="bull-table"><thead><tr>'
+      +'<th>Matière</th><th>Note/20</th><th>Coeff.</th><th>Points</th><th>Mention</th>'
+    +'</tr></thead><tbody>'
+    +notes.map(function(n){
+      var note=Number(n.note||0),coef=Number(n.coefficient||1);
+      var men=note>=16?'Très Bien':note>=14?'Bien':note>=10?'Assez Bien':'Insuffisant';
+      var col=note>=10?'#10b981':'#ef4444';
+      return '<tr><td>'+n.matiere+'</td>'
+        +'<td style="font-weight:700;color:'+col+'">'+note+'</td>'
+        +'<td>'+coef+'</td>'
+        +'<td>'+(note*coef).toFixed(1)+'</td>'
+        +'<td style="font-size:11px">'+men+'</td></tr>';
+    }).join('')
+    +'<tr style="background:#ede9fe;font-weight:900"><td>MOYENNES GÉNÉRALES</td>'
+      +'<td style="color:#6c63ff">'+moy+'/20</td>'
+      +'<td>'+totalCoef+'</td>'
+      +'<td>'+totalPts.toFixed(1)+'</td>'
+      +'<td style="color:#6c63ff">'+mention+'</td></tr>'
+    +'</tbody></table>'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-size:13px">'
+      +'<div>Moyenne: <strong style="color:#6c63ff;font-size:18px">'+moy+'/20</strong></div>'
+      +'<div>Mention: <strong style="color:#6c63ff">'+mention+'</strong></div>'
+      +'<div>Rang: <strong>---</strong></div>'
+      +'<div style="font-size:11px;color:#666">Édité le '+today+'</div>'
+    +'</div>'
+    +'<div class="bull-footer">'
+      +'<div class="bull-sign"><div class="bull-sign-line">Le Directeur</div></div>'
+      +'<div class="bull-sign"><div class="bull-sign-line">Cachet de l\'établissement</div></div>'
+      +'<div class="bull-sign"><div class="bull-sign-line">Parent / Tuteur</div></div>'
+    +'</div>'
+  +'</div>';
+}
+
+function imprimerBulletin() {
+  var content = document.getElementById('bulletin-print');
+  if(!content){ toast('Générez d\'abord le bulletin'); return; }
+  var w = window.open('','_blank','width=700,height=900');
+  w.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8">'
+    +'<title>Bulletin — '+_eleve.nom+'</title>'
+    +'<style>body{font-family:Arial,sans-serif;padding:20px;color:#1a1a2e}'
+    +'.bull-table{width:100%;border-collapse:collapse;font-size:12px}'
+    +'th{background:#6c63ff;color:#fff;padding:8px 10px;text-align:left}'
+    +'td{padding:8px 10px;border-bottom:1px solid #e5e7eb}'
+    +'tr:nth-child(even) td{background:#f9fafb}'
+    +'</style></head><body>'
+    + content.innerHTML
+    +'<scr'+'ipt>window.onload=function(){window.print();}<\/scr'+'ipt>'
+    +'<'+'/body><'+'/html>');
+  w.document.close();
+}
+
+// ── PRÉSENCES ─────────────────────────────────────
+function renderPresences() {
+  var pres = mesPresences().sort(function(a,b){return (b.date||'').localeCompare(a.date||'');});
+  var el   = document.getElementById('presences-content');
+  var tot  = pres.length;
+  var abs  = pres.filter(function(p){return p.statut==='Absent';}).length;
+  var pct  = tot>0?Math.round((tot-abs)/tot*100):100;
+
+  el.innerHTML = '<div class="table-wrap" style="padding:16px;margin-bottom:16px">'
+    +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">'
+      +'<span style="font-weight:700">Taux de présence</span>'
+      +'<span style="font-size:22px;font-weight:900;color:'+(pct>=80?'var(--green)':'var(--red)')+'">'+pct+'%</span>'
+    +'</div>'
+    +'<div class="presence-bar"><div class="presence-fill" style="width:'+pct+'%;background:'+(pct>=80?'var(--green)':'var(--red)')+'"></div></div>'
+    +'<div style="font-size:12px;color:var(--txt3);margin-top:8px">'+abs+' absence(s) sur '+tot+' jour(s)</div>'
+  +'</div>'
+  +(pres.length?'<div class="table-wrap"><table><thead><tr>'
+    +'<th>Date</th><th>Statut</th><th>Motif</th>'
+  +'</tr></thead><tbody>'
+  +pres.map(function(p){
+    var isAbs=p.statut==='Absent';
+    return '<tr><td>'+p.date+'</td>'
+      +'<td><span style="padding:3px 10px;border-radius:10px;font-size:11px;font-weight:700;'
+        +'background:'+(isAbs?'rgba(239,68,68,.15)':'rgba(16,185,129,.15)')
+        +';color:'+(isAbs?'var(--red)':'var(--green)')+'">'+p.statut+'</span></td>'
+      +'<td style="font-size:12px;color:var(--txt2)">'+(p.motif||'---')+'</td></tr>';
+  }).join('')+'</tbody></table></div>'
+  :'<div class="empty"><div class="empty-icon">📅</div>Aucune donnée de présence</div>');
+}
+
+// ── PAIEMENTS ─────────────────────────────────────
+function renderPaiements() {
+  var pays  = mesPaiements();
+  var total = pays.reduce(function(s,p){return s+Number(p.montant||0);},0);
+  var frais = Number(_eleve.frais||0);
+  var reste = Math.max(0, frais-total);
+  var pct   = frais>0?Math.min(100,Math.round(total/frais*100)):0;
+  var el    = document.getElementById('paiements-content');
+
+  el.innerHTML = '<div class="table-wrap" style="padding:16px;margin-bottom:16px">'
+    +'<div style="display:flex;justify-content:space-between;margin-bottom:12px">'
+      +'<div><div style="font-size:11px;color:var(--txt3)">Total à payer</div><div style="font-size:20px;font-weight:900">'+fmtNum(frais)+' F</div></div>'
+      +'<div style="text-align:right"><div style="font-size:11px;color:var(--txt3)">Payé</div><div style="font-size:20px;font-weight:900;color:var(--green)">'+fmtNum(total)+' F</div></div>'
+      +'<div style="text-align:right"><div style="font-size:11px;color:var(--txt3)">Restant</div><div style="font-size:20px;font-weight:900;color:'+(reste===0?'var(--green)':'var(--red)')+'">'+fmtNum(reste)+' F</div></div>'
+    +'</div>'
+    +'<div class="presence-bar"><div class="presence-fill" style="width:'+pct+'%;background:'+(reste===0?'var(--green)':'var(--yellow)')+'"></div></div>'
+    +'<div style="font-size:12px;color:var(--txt3);margin-top:6px">'+pct+'% réglé</div>'
+  +'</div>'
+  +(pays.length?'<div class="table-wrap"><table><thead><tr>'
+    +'<th>Date</th><th>Montant</th><th>Mode</th><th>Trimestre</th><th>Statut</th>'
+  +'</tr></thead><tbody>'
+  +pays.map(function(p){
+    return '<tr><td>'+p.date+'</td>'
+      +'<td style="font-weight:700;color:var(--green)">'+fmtNum(p.montant)+' F</td>'
+      +'<td>'+(p.mode||'---')+'</td>'
+      +'<td>'+(p.trimestre?p.trimestre+'er trim.':'---')+'</td>'
+      +'<td><span style="padding:3px 10px;border-radius:10px;font-size:11px;font-weight:700;background:rgba(16,185,129,.15);color:var(--green)">✅ Payé</span></td></tr>';
+  }).join('')+'</tbody></table></div>'
+  :'<div class="empty"><div class="empty-icon">💰</div>Aucun paiement enregistré</div>');
+}
+
+// ── RÉSULTATS EXAMENS ─────────────────────────────
+function renderResultats() {
+  var exams = mesExamens();
+  var el    = document.getElementById('resultats-content');
+  if(!exams.length) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">🏆</div>Aucun examen pour votre classe</div>';
+    return;
+  }
+  el.innerHTML = '<div class="table-wrap"><table><thead><tr>'
+    +'<th>Examen</th><th>Matière</th><th>Date</th><th>Inscrits</th><th>Admis</th><th>Taux</th>'
+  +'</tr></thead><tbody>'
+  +exams.map(function(e){
+    var tx=e.inscrits>0?Math.round(e.admis/e.inscrits*100):0;
+    return '<tr><td><strong>'+(e.titre||e.type||'---')+'</strong></td>'
+      +'<td>'+(e.matiere||'---')+'</td>'
+      +'<td>'+(e.date||'---')+'</td>'
+      +'<td style="text-align:center">'+(e.inscrits||0)+'</td>'
+      +'<td style="text-align:center;color:var(--green);font-weight:700">'+(e.admis||0)+'</td>'
+      +'<td><span style="font-weight:700;color:'+(tx>=50?'var(--green)':'var(--red)')+'">'+tx+'%</span></td></tr>';
+  }).join('')+'</tbody></table></div>';
+}
+
+// ── Utilitaires ───────────────────────────────────
+function calcAge(ddn) {
+  if(!ddn) return '';
+  var d = new Date(ddn); if(isNaN(d)) return '';
+  return new Date().getFullYear() - d.getFullYear();
+}
+function fmtNum(n){ return Number(n||0).toLocaleString('fr-FR'); }
+
+var _toastTimer;
+function toast(msg) {
+  var el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 3000);
+}
+</script>
+</body>
+</html>
