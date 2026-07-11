@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Ets Tout Va Bien — DIVINE PRIVILEGE</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:Arial,sans-serif;background:#1A1200;min-height:100vh;display:flex;align-items:center;justify-content:center;}
+    .card{background:#fff;border-radius:16px;padding:40px 36px;text-align:center;max-width:420px;width:90%;box-shadow:0 8px 40px rgba(0,0,0,.4);}
+    .icon{font-size:52px;margin-bottom:12px}
+    .nom{font-size:22px;font-weight:700;color:#1A1200;margin-bottom:4px}
+    .sub{font-size:13px;color:#888;margin-bottom:24px}
+    .bar{height:4px;border-radius:2px;background:#3FB950;margin-bottom:24px}
+    .msg{font-size:14px;color:#555;margin-bottom:20px}
+    .btn{display:inline-block;background:#3FB950;color:#fff;padding:14px 36px;border-radius:10px;font-size:15px;font-weight:700;text-decoration:none;}
+    .progress{width:0%;height:4px;background:#3FB950;border-radius:2px;margin-top:16px;transition:width 1.4s linear;}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">🛒</div>
+    <div class="nom">Ets Tout Va Bien</div>
+    <div class="sub">DIVINE PRIVILEGE — dpGestPro</div>
+    <div class="bar"></div>
+    <div class="msg">Connexion en cours...</div>
+    <a class="btn" href="https://jeanpaul329.github.io/dpgestpro/index.html">🚀 Accéder maintenant</a>
+    <div class="progress" id="prog"></div>
+  </div>
+  <script>
+    // Store enterprise ID then redirect to main app (no ?ent= param)
+    try{ localStorage.setItem('dpg_url_ent', 'ets_tout_va_bien'); }catch(e){}
+    document.getElementById('prog').style.width = '100%';
+    setTimeout(function(){
+      window.location.replace('https://jeanpaul329.github.io/dpgestpro/index.html');
+    }, 1200);
+  </script>
+</body>
+</html>
